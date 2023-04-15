@@ -3,7 +3,6 @@ from django.db import models
 
 # Create your models here.
 
-
 class User(AbstractUser):
     groups = models.ManyToManyField(
         'auth.Group',
@@ -13,4 +12,3 @@ class User(AbstractUser):
         'auth.Permission',
         related_name='users'
     )
-

@@ -1,6 +1,35 @@
 {% extends 'layout.html' %}
+
 {% block body %}
+<div class="flex">
+    <img class="hidden lg:block w-2/3" src="https://cdn.toprankers.net.in/svg/Group.svg" alt="image">
 
+    <form action="{% url 'login' %}" class="flex justify-center items-start min-h-[10vh] flex-col gap-6 px-5 py-10 w-[100%]"
+        method="post">
+        {% csrf_token %}
+        <div class="relative w-[100%]">
+            <input class="login-input" type="text" name="username" required>
+            <span class="movable-span">Username</span>
+        </div>
+        <div class="relative w-[100%]">
+            <input class="login-input" type="password" name="password" required>
+            <span class="movable-span">Password</span>
+        </div>
 
+        <div class="button">
+            {% if message %}
+            <p class="text-sm text-red-700 mb-2">{{ message }}</p>
+            {% endif %}
+            <div class="flex space-x-4">
+                <input class="cursor-pointer bg-red-700 text-white font-semibold px-4 py-2 md:px-6 md:py-3 hover:bg-red-800"
+                    type="submit" value="Log In">
+                <input class="cursor-pointer bg-gray-500 bg-opacity-75 text-white font-semibold px-4 py-2 md:px-6 md:py-3 hover:bg-gray-600 hover:bg-opacity-75"
+                    type="submit" value="Forgot Password">
+            </div>
+            <p class="text-sm just text-center pt-2">Don't have an account? <a href="{% url 'register' %}"
+                    class="font-semibold hover:underline text-blue-700">Register Now</a></p>
+        </div>
+    </form>
+</div>
 
 {% endblock %}
