@@ -3,5 +3,4 @@ swiftlearn/migrations
 swiftlearn/__init__.py
 capstone/__pycache__
 capstone/__init__.py
-tailwind/node_modules
-tailwind/*.*
+tailwind/

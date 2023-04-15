@@ -1,0 +1,162 @@
+{% extends 'layout.html' %}
+{% block body %}
+
+<div
+    class="mb-4 bg-[url('https://psl.eu/sites/default/files/2017-10/actu_harvard-gates-fall-cc-Tim-Sackton-Flickr-Creative-commons.jpg')] bg-center bg-cover">
+    <div class="bg-black bg-opacity-50 md:pb-10">
+        <h1
+            class="text-3xl md:text-6xl lg:text-8xl font-[Merriweather] text-white text-center pt-10 md:pt-14 lg:pt-16 font-thin">
+            Professional and
+            Life Long Learning</h1>
+        <p
+            class="text-lg md:text-2xl lg:text-4xl font-[Merriweather] fonr-thin text-white text-center py-4 md:py-6 lg:py-10">
+            In-person, blended,
+            and online courses</p>
+
+        <div class="buttons flex flex-col md:flex-row text-white text-md justify-center items-center pb-8">
+            <a href="#"
+                class="bg-red-800 hover:bg-red-900 m-2 md:m-4 lg:m-7 px-4 md:px-6 py-2 md:py-4 uppercase font-semibold">All
+                Courses</a>
+            <a href="#"
+                class="bg-red-800 hover:bg-red-900 m-2 md:m-4 lg:m-7 px-4 md:px-6 py-2 md:py-4 uppercase font-semibold">Free
+                Courses</a>
+            <a href="#"
+                class="bg-red-800 hover:bg-red-900 m-2 md:m-4 lg:m-7 px-4 md:px-6 py-2 md:py-4 uppercase font-semibold">Paid
+                Courses</a>
+        </div>
+    </div>
+</div>
+
+<form class=" border-2 border-black rounded-lg px-6 py-3 m-4 bg-gray-100" action="#">
+    <h2 class="text-xl text-center mb-4 font-semibold font-[Merriweather Sans] md:text-4xl md:mb-2">Book a Counseling
+        Session</h2>
+    <p class="hidden md:block text-xl text-center mb-2">Learn from World's Finest Academic Ecosystem</p>
+    <p class="hidden md:block text-2xl text-center">Fill your details</p>
+    <div>
+        <label for="name">Full Name *</label> <br>
+        <input class="w-[100%] px-3 py-1 md:py-1.5 mb-2 border-2 rounded-md" type="text" name="name" id="name">
+    </div>
+    <div>
+        <label for="phone">Mobile Number *</label> <br>
+        <input class="w-[100%] px-3 py-1 md:py-1.5 mb-2 border-2 rounded-md" type="number" name="phone" id="phone">
+    </div>
+    <div>
+        <label for="email">Email Address *</label> <br>
+        <input class="w-[100%] px-3 py-1 md:py-1.5 mb-2 border-2 rounded-md" type="email" name="email" id="email">
+    </div>
+    <div>
+        <label for="text">Your Location *</label> <br>
+        <input class="w-[100%] px-3 py-1 md:py-1.5 mb-2 border-2 rounded-md" type="text" name="address" id="address">
+    </div>
+    <div class="flex justify-center">
+        <button
+            class="bg-orange-400 rounded-md px-4 py-2 md:px-5 md:py-3 text-white my-4 font-[Merriweather Sans] font-semibold hover:bg-orange-500"
+            type="submit">Schedule a Free Session</button>
+    </div>
+</form>
+
+<h2 class="font-[Merriweather] text-xl md:text-4xl mx-4 my-2">Featured Courses</h2>
+
+<div class="cards flex flex-col md:flex-row justify-evenly mx-4">
+
+    <div class="card border-2 border-black rounded-md font-[Merriweather Sans] mb-4 mr-4 md:w-1/3">
+        <img src="https://pll.harvard.edu/sites/default/files/styles/card/public/course/078916028-crowd-people-walking-street%20%281%29.jpeg?itok=N4vMiI2V"
+            class="w-[100%]" alt="...">
+        <div class="card-body mx-4 my-2">
+            <a class="text-xl font-semibold text-[#A51C30] cursor-pointer hover:underline">Open Innovation</a>
+            <p class="card-text text-lg text-[#555]">Solve your organization’s problems by looking outside your
+                organization.</p>
+            <ul class="flex flex-col lg:flex-row list-disc lg:list-none justify-between m-4 text-[#555]">
+                <li>$950</li>
+                <li>6 WEEKS LONG</li>
+                <li>REGISTER BY JULY 3</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card border-2 border-black rounded-md font-[Merriweather Sans] mb-4 mr-4 md:w-1/3">
+        <img src="https://pll.harvard.edu/sites/default/files/styles/card/public/course/Data-Science-for-Business-Web-Header.jpg?itok=U-I2WcGn"
+            class="w-[100%]" alt="...">
+        <div class="card-body mx-4 my-2">
+            <a class="text-xl font-semibold text-[#A51C30] cursor-pointer hover:underline">Data Science for Business</a>
+            <p class="card-text text-lg text-[#555]">Learn how to effectively use data to tackle your business
+                decisions. Designed for managers, this course provides a hands-on...</p>
+            <ul class="flex flex-col lg:flex-row list-disc lg:list-none justify-between m-4 text-[#555]">
+                <li>$1,600</li>
+                <!-- <li>11 WEEKS LONG</li> -->
+                <li>REGISTER BY 1 MAY</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card border-2 border-black rounded-md font-[Merriweather Sans] mb-4 mr-4 md:w-1/3">
+        <img src="https://pll.harvard.edu/sites/default/files/styles/card/public/course/125091450-hiking-woman-traveler-crossroa_1.jpg?itok=TOC-bk5v"
+            class="w-[100%]" alt="...">
+        <div class="card-body mx-4 my-2">
+            <a class="text-xl font-semibold text-[#A51C30] cursor-pointer hover:underline">Managing Happiness</a>
+            <p class="card-text text-lg text-[#555]">Happiness is within your control. Write your own ending.</p>
+            <ul class="flex flex-col lg:flex-row list-disc lg:list-none justify-between m-4 text-[#555]">
+                <li>FREE*</li>
+                <li>6 WEEKS LONG</li>
+                <li>AVAILABLE NOW</li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+<div>
+    <h1 class="text-center text-3xl md:text-4xl text-[Merriweather Sans] font-semibold m-2">World's Largest Super Carrer
+        Platform
+    </h1>
+    <div
+        class="box flex flex-col md:flex-row space-y-5 md:space-y-0 justify-around items-center text-center font-[Merriweather Sans] text-lg md:text-xl font-semibold m-4 p-2 md:p-6 bg-[rgba(38,104,179,.1)] bg-opacity-40 text-black rounded-sm">
+        <div>
+            <h1>6,000,000 +</h1>
+            <p>Learners</p>
+        </div>
+        <div>
+            <h1>1000</h1>
+            <p>Courses</p>
+        </div>
+        <div>
+            <h1>180</h1>
+            <p>Countries</p>
+        </div>
+    </div>
+
+    <div
+        class="flex flex-col md:flex-row space-y-5 md:space-y-0 justify-around items-center font-[Merriweather Sans] m-4">
+        <div class="text-center">
+            <img class="w-1/6 mx-auto" src="https://cdn.toprankers.net.in/svg/Better%20Teacher.svg" alt="">
+            <h2 class="text-2xl font-medium mb-2">Better Teachers</h2>
+            <p class="text-lg">Experienced and Empathetic Teachers mentoring & teaching via LIVE & Interactive Classes
+                with an average review of 4.7+ ensures Quality Content Delivery in each and every class.</p>
+        </div>
+        <div class="text-center">
+            <img class="w-1/6 mx-auto" src="https://cdn.toprankers.net.in/svg/Better-Learning.svg" alt="">
+            <h2 class="text-2xl font-medium mb-2">Better Learning</h2>
+            <p class="text-lg">The 360° Prep Engine working in a Controlled Learning Environment, ensures that a
+                Student's Performance is evidently better via Regular Classes, Frequent Testing, Personalized Feedback
+                and Mentoring Sessions.</p>
+        </div>
+        <div class="text-center">
+            <img class="w-1/6 mx-auto" src="https://cdn.toprankers.net.in/svg/Better%20Result.svg" alt="">
+            <h2 class="text-2xl font-medium mb-2">Better Results</h2>
+            <p class="text-lg">Better Learning ensures Better Results. With the highest Student Success Ratios in the
+                country, we are not just proud of our Quality of Results but also the Quality of Final Admission Offers
+                to our Students.</p>
+        </div>
+    </div>
+</div>
+
+<div class="flex flex-col items-center text-center mt-4 p-2 md:p-6 bg-[rgba(38,104,179,.1)] bg-opacity-40 rounded-sm">
+    <h1 class="text-2xl font-[Merriweather]">Stay Updated!</h1>
+    <input class="mt-6 w-[1/3] sm:w-1/4 py-2 px-4 md:py-3 md:px-5 outline-none border-2 border-[#0000007b]" type="email"
+        name="email-subscribe" id="email-subscribe" placeholder="Email Address">
+    <input
+        class="bg-transparent border-2 font-[Merriweather Sans] text-sm md:text-lg border-[#0000007b] m-3 md:m-5 lg:m-7 px-4 md:px-6 py-2 md:py-4 uppercase tracking-wide hover:bg-[#2668B3] hover:border-[#2668B3] hover:text-white cursor-pointer"
+        value="SUBSCRIBE" type="button">
+</div>
+
+{% endblock %}
