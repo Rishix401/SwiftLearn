@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.shortcuts import HttpResponse, HttpResponseRedirect, render
@@ -6,7 +6,6 @@ from django.urls import reverse
 
 from .models import *
 
-User = get_user_model()
 # Create your views here.
 def index(request):
     return render(request, "swiftlearn/index.html")
