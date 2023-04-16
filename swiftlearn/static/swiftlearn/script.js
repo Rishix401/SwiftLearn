@@ -48,4 +48,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 
+    document.getElementById('sm-filter-btn').addEventListener('click', function() {
+        const filterMenu = document.getElementById("filterMenu");
+        filterMenu.classList.toggle("hidden");
+    })
 });

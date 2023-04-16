@@ -18,7 +18,6 @@ class Course(models.Model):
         ('available', 'Available'),
         ('upcoming', 'Upcoming'),
     )
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     description = models.TextField()
     price = models.DecimalField(max_digits=6, decimal_places=2)
@@ -27,6 +26,7 @@ class Course(models.Model):
     date = models.DateField()
     duration = models.CharField(max_length=100)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    image_url = models.URLField(blank=True, null=True)
 
     def __str__(self):
         return self.title

@@ -7,8 +7,60 @@ from django.urls import reverse
 from .models import *
 
 # Create your views here.
+
+
 def index(request):
     return render(request, "swiftlearn/index.html")
+
+
+def catalog(request):
+    categories = Category.objects.all()
+    courses = Course.objects.all()
+
+    selected_categories = request.GET.getlist('category')
+    selected_status = request.GET.get('status')
+    selected_min_price = request.GET.get('min_price')
+    selected_max_price = request.GET.get('max_price')
+    selected_is_free = request.GET.get('is_free')
+
+    if selected_categories:
+        courses = courses.filter(category__name__in=selected_categories)
+
+    # filter courses based on selected status
+    if selected_status:
+        courses = courses.filter(status=selected_status)
+
+
+    # filter courses based on selected price range
+    if selected_max_price:
+        courses = courses.filter(price__lte=selected_max_price)
+
+    # filter courses based on selected is_free option
+    if selected_is_free:
+        courses = courses.filter(is_free=selected_is_free)
+
+    context = {
+        'categories': categories,
+        'courses': courses,
+        'selected_categories': selected_categories,
+        'selected_status': selected_status,
+        'selected_min_price': selected_min_price,
+        'selected_max_price': selected_max_price,
+        'selected_is_free': selected_is_free,
+    }
+    return render(request, 'swiftlearn/catalog.html', context)
+
+
+def category(request):
+    if request.method == "POST":
+        categoryInp = request.POST['category']
+        category = Category.objects.get(name=categoryInp)
+        filterCourses = Course.objects.filter(category=category)
+        allCats = Category.objects.all()
+        return render(request, "swiftlearn/catalog.html", {
+            "courses": filterCourses,
+            "cats": allCats
+        })
 
 
 def login_view(request):
@@ -69,4 +121,3 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "swiftlearn/register.html")
-
