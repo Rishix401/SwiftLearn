@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+
+<div>
+    <h1 class="text-3xl font-[Merriweather] m-7 mt-5">{{ instructor.name }}</h1>
+    <img class="float-left mx-7 mt-2 mb-6" src="{{ instructor.image_url }}" alt="pic">
+    <div class="mx-10">
+        <h2 class="clear-left md:clear-none text-xl font-[Merriweather Sans] font-semibold">{{ instructor.title }}</h2>
+        <p class="clear-left md:clear-none text-lg font-[Merriweather Sans]">{{ instructor.description }}</p>
+    </div>
+</div>
+
+{% endblock %}

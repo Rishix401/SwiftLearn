@@ -1,0 +1,72 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+
+<hr>
+<div class="bg-[#293352] font-[Merriweather] px-4">
+    <div class="hidden lg:block float-right my-10 ml-5 rounded-sm shadow-lg bg-white">
+        <img src="{{ course.image_url }}" alt="">
+        <div class="flex items-center justify-between mx-4 py-4 text-sm" style="border-bottom: 1px solid #d8d8d8;">
+            <p class="font-semibold">DURATION</p>
+            <p>{{ course.duration }}</p>
+        </div>
+        <div class="flex items-center justify-between mx-4 py-4 text-sm" style="border-bottom: 1px solid #d8d8d8;">
+            <p class="font-semibold">SUBJECT</p>
+            <p>{{ course.category }}</p>
+        </div>
+        <div class="flex items-center justify-between mx-4 py-4 text-sm" style="border-bottom: 1px solid #d8d8d8;">
+            <p class="font-semibold">COURSE LANGUAGE</p>
+            <p>{{ course.course_language }}</p>
+        </div>
+        <div class="flex items-center justify-between mx-4 py-4 text-sm">
+            <p class="font-semibold">DIFFICULTY</p>
+            <p>{{ course.difficulty_level.capitalize }}</p>
+        </div>
+    </div>
+    <h1 class="text-2xl md:text-3xl lg:text-4xl py-6 text-white lg:thin">{{ course.title }}</h1>
+    <p class="text-md font-medium pb-4 text-white tracking-wider" style="font-family: 'Merriweather Sans';">
+        {{ course.description }}</p>
+</div>
+
+<div class="font-[Merriweather] px-4 flex flex-wrap items-center justify-evenly mt-4">
+    <div class="flex space-x-2">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"
+            style="width: 25px; height: 25px;"><!--! Font Awesome Pro 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+            <path
+                d="M128 0c17.7 0 32 14.3 32 32V64H288V32c0-17.7 14.3-32 32-32s32 14.3 32 32V64h48c26.5 0 48 21.5 48 48v48H0V112C0 85.5 21.5 64 48 64H96V32c0-17.7 14.3-32 32-32zM0 192H448V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V192zm64 80v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V272c0-8.8-7.2-16-16-16H80c-8.8 0-16 7.2-16 16zm128 0v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V272c0-8.8-7.2-16-16-16H208c-8.8 0-16 7.2-16 16zm144-16c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V272c0-8.8-7.2-16-16-16H336zM64 400v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V400c0-8.8-7.2-16-16-16H80c-8.8 0-16 7.2-16 16zm144-16c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V400c0-8.8-7.2-16-16-16H208zm112 16v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V400c0-8.8-7.2-16-16-16H336c-8.8 0-16 7.2-16 16z" />
+        </svg>
+        {% if course.status == 'available' %}
+        <p class="md:text-lg">Course Started: {{ course.date|upper }}</p>
+        {% else %}
+        <p class="md:text-lg">Register by: {{ course.date|upper }}</p>
+        {% endif %}
+    </div>
+    {% if course.is_free %}
+    <p class="md:text-lg">FREE*</p>
+    {% else %}
+    <p class="md:text-lg">${{course.price}}</p>
+    {% endif %}
+    <p class="md:text-lg">ONLINE</p>
+</div>
+
+<div class="lg:hidden my-10 mx-4 md:mx-32 rounded-sm shadow-lg bg-white">
+    <img class="w-[100%]" src="{{ course.image_url }}" alt="">
+    <div class="flex items-center justify-between mx-4 py-4 text-sm" style="border-bottom: 1px solid #d8d8d8;">
+        <p class="font-semibold">DURATION</p>
+        <p>{{ course.duration }}</p>
+    </div>
+    <div class="flex items-center justify-between mx-4 py-4 text-sm" style="border-bottom: 1px solid #d8d8d8;">
+        <p class="font-semibold">SUBJECT</p>
+        <p>{{ course.category }}</p>
+    </div>
+    <div class="flex items-center justify-between mx-4 py-4 text-sm" style="border-bottom: 1px solid #d8d8d8;">
+        <p class="font-semibold">COURSE LANGUAGE</p>
+        <p>{{ course.course_language }}</p>
+    </div>
+    <div class="flex items-center justify-between mx-4 py-4 text-sm">
+        <p class="font-semibold">DIFFICULTY</p>
+        <p>{{ course.difficulty_level.capitalize }}</p>
+    </div>
+</div>
+
+{% endblock %}

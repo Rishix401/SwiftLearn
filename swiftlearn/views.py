@@ -7,8 +7,6 @@ from django.urls import reverse
 from .models import *
 
 # Create your views here.
-
-
 def index(request):
     return render(request, "swiftlearn/index.html")
 
@@ -29,7 +27,6 @@ def catalog(request):
     # filter courses based on selected status
     if selected_status:
         courses = courses.filter(status=selected_status)
-
 
     # filter courses based on selected price range
     if selected_max_price:
@@ -61,6 +58,20 @@ def category(request):
             "courses": filterCourses,
             "cats": allCats
         })
+
+
+def course(request, id):
+    course = Course.objects.get(id=id)
+    return render(request, "swiftlearn/course.html", {
+        "course": course,
+    })
+
+
+def instructor(request, id):
+    instructor = Instructor.objects.get(id=id)
+    return render(request, "swiftlearn/instructor.html", {
+        "instructor": instructor,
+    })
 
 
 def login_view(request):
