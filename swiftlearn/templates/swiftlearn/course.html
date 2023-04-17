@@ -49,7 +49,7 @@
     <p class="md:text-lg">ONLINE</p>
 </div>
 
-<div class="lg:hidden my-10 mx-4 md:mx-32 rounded-sm shadow-lg bg-white">
+<div class="lg:hidden my-10 mx-4 md:mx-32 rounded-sm shadow-lg bg-white font-[Merriweather]">
     <img class="w-[100%]" src="{{ course.image_url }}" alt="">
     <div class="flex items-center justify-between mx-4 py-4 text-sm" style="border-bottom: 1px solid #d8d8d8;">
         <p class="font-semibold">DURATION</p>
@@ -66,6 +66,43 @@
     <div class="flex items-center justify-between mx-4 py-4 text-sm">
         <p class="font-semibold">DIFFICULTY</p>
         <p>{{ course.difficulty_level.capitalize }}</p>
+    </div>
+</div>
+
+<h1 class="text-2xl px-5 mt-6 mb-3 font-[Merriweather]">What you'll learn?</h1>
+<ul class="font-[Merriweather Sans] text-xl list-disc" style="padding: 0 50px;">
+    {% for pointer in pointers %}
+    <li class="">{{ pointer }}</li>
+    {% endfor %}
+</ul>
+{% if course.is_free %}
+<button class="bg-red-700 hover:bg-red-800 font-[Merriweather Sans] px-6 py-4 m-7 font-semibold rounded-sm text-white text-xl">Enroll Now</button>
+{% else %}
+<button class="bg-red-700 hover:bg-red-800 font-[Merriweather Sans] px-6 py-4 m-7 font-semibold rounded-sm text-white text-xl">Purchase Now</button>
+{% endif %}
+
+<div class="bg-slate-100 mb-0 pt-2">
+    <h1 class="text-2xl font-[Merriweather] text-center my-10">Instructors</h1>
+    <div class="flex flex-col md:flex-row flex-wrap justify-around items-center">
+        {% for instructor in instructors %}
+        <div class="text-center mb-7">
+            <img src="{{ instructor.image_url }}" alt="image" style="border-radius: 50%; margin: 0 auto;">
+            <a href="/instructor/{{instructor.id}}" class="text-xl font-[Merriweather] text-red-700 hover:underline">{{ instructor.name }}</a>
+            <p class="card-text font-[Merriweather Sans] text-lg font-light mt-2">
+                {{ instructor.title }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+<div class="bg-[#e1dddbb0] mb-0 pt-4 pb-12 flex flex-col justify-between items-center">
+    <h1 class="font-[Merriweather Sans] font-semibold text-center py-7 text-3xl">Share this course</h1>
+    <div class="space-x-8">
+        <i class="fa-brands fa-facebook fa-2xl cursor-pointer"></i>
+        <i class="fa-brands fa-twitter fa-2xl cursor-pointer"></i>
+        <i class="fa-brands fa-linkedin fa-2xl cursor-pointer"></i>
+        <i class="fa-solid fa-envelope fa-2xl cursor-pointer"></i>
     </div>
 </div>
 

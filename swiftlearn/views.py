@@ -20,6 +20,7 @@ def catalog(request):
     selected_min_price = request.GET.get('min_price')
     selected_max_price = request.GET.get('max_price')
     selected_is_free = request.GET.get('is_free')
+    selected_is_paid = request.GET.get('is_paid')
 
     if selected_categories:
         courses = courses.filter(category__name__in=selected_categories)
@@ -62,8 +63,12 @@ def category(request):
 
 def course(request, id):
     course = Course.objects.get(id=id)
+    instructors = course.instructor.all()
+    what_you_will_learn = course.what_you_will_learn.splitlines()
     return render(request, "swiftlearn/course.html", {
         "course": course,
+        "instructors": instructors,
+        "pointers": what_you_will_learn,
     })
 
 
