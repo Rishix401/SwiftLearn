@@ -78,9 +78,9 @@
 </ul>
 {% if not enroll %}
 {% if course.is_free %}
-<button onclick="location.href='/enroll?course_id={{course.id}}'" class="bg-red-700 hover:bg-red-800 font-[Merriweather Sans] px-6 py-4 m-7 font-semibold rounded-sm text-white text-xl">Enroll Now</button>
+<button onclick="location.href='/payment/{{course.id}}'" class="bg-red-700 hover:bg-red-800 font-[Merriweather Sans] px-6 py-4 m-7 font-semibold rounded-sm text-white text-xl">Enroll Now</button>
 {% else %}
-<button onclick="location.href='/payment?course_id={{course.id}}'" class="bg-red-700 hover:bg-red-800 font-[Merriweather Sans] px-6 py-4 m-7 font-semibold rounded-sm text-white text-xl">Purchase Now</button>
+<button onclick="location.href='/payment/{{course.id}}'" class="bg-red-700 hover:bg-red-800 font-[Merriweather Sans] px-6 py-4 m-7 font-semibold rounded-sm text-white text-xl">Purchase Now</button>
 {% endif %}
 {% else %}
 <button onclick="location.href=''" class="bg-[#00262b] hover:bg-[#00262bdf] font-[Merriweather Sans] px-6 py-4 m-7 font-semibold rounded-sm text-white text-xl">View Course</button>

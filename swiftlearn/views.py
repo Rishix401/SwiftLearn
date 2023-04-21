@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
+from django.http import JsonResponse
 from django.shortcuts import HttpResponse, HttpResponseRedirect, render, redirect
 from django.urls import reverse
 
@@ -65,7 +66,7 @@ def course(request, id):
     course = Course.objects.get(id=id)
     instructors = course.instructor.all()
     try: enroll = Enroll.objects.get(course=course, user=request.user)
-    except: enroll = ''
+    except: enroll = None
     what_you_will_learn = course.what_you_will_learn.splitlines()
     return render(request, "swiftlearn/course.html", {
         "course": course,
@@ -83,38 +84,49 @@ def instructor(request, id):
 
 
 @login_required
-def payment(request):
-    courseId = request.GET.get("course_id")
-    print(courseId)
-    if request.method == 'POST':
-        enroll(request, courseId)
+def payment_and_enroll(request, course_id):
+    course = Course.objects.get(id=course_id)
 
-    user = request.user
-    course = Course.objects.get(id=courseId, is_free=False)
-    return render(request, "swiftlearn/payment.html", {
-        "user": user,
-        "course": course,
+    if course.is_free:
+        Enroll.objects.create(course=course, user=request.user)
+        return redirect(f'/course/{course_id}')
+
+    if request.method == 'POST' and (not course.is_free):
+            # Perform payment logic here
+            # NOTE: Not performing payment logic in this project
+            Enroll.objects.create(course=course, user=request.user)
+            return redirect(f'/course/{course_id}')
+
+    return render(request, 'swiftlearn/payment.html', {
+        'course': course,
+        'course_id': course_id,
     })
 
 
 @login_required
-def enroll(request, course_id):
-    # ensure that only free courses are enrolled through get request
-    paidCourses = Course.objects.filter(is_free=False)
-    for course in paidCourses:
-        if course_id in course.id:
-            print(course_id, course)
-            print("true")
-    else: print("false")
-    # if request.method == 'POST':
-    #     try: 
-    #         courseId = request.POST.get("course_id")
-    #         e = Enroll.objects.create(course=Course.objects.get(id=courseId), user=request.user)
-    #     except: e = Enroll.objects.create(course=Course.objects.get(id=course_id), user=request.user)
-    #     e.save()
-    return redirect(f"/course/{courseId}")
-
-
+def validate_coupon(request):
+    coupon_code = request.GET.get('code', None)
+    if coupon_code:
+        try: coupon = Coupon.objects.get(code=coupon_code)
+        except: return JsonResponse({
+            'valid': False,
+            'error_message': 'Incorrect coupon code.',
+        })
+        if coupon.is_valid():
+            return JsonResponse({
+                'valid': True,
+                'discount_percent': coupon.discount_percent,
+            })
+        else:
+            return JsonResponse({
+                'valid': False,
+                'error_message': 'Coupon is no longer valid.',
+            })
+    else:
+        return JsonResponse({
+            'valid': False,
+            'error_message': 'Coupon code is required.',
+        })
 
 @login_required
 def dashboard(request):
