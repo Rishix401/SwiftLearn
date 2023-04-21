@@ -94,7 +94,11 @@
             <img src="{{ instructor.image_url }}" alt="image" style="border-radius: 50%; margin: 0 auto;">
             <a href="/instructor/{{instructor.id}}" class="text-xl font-[Merriweather] text-red-700 hover:underline">{{ instructor.name }}</a>
             <p class="card-text font-[Merriweather Sans] text-lg font-light mt-2">
-                {{ instructor.title }}</p>
+                {% if instructor.title|length > 60 %}
+                    <p class="card-description">{{ instructor.title|slice:60 }}...</p>
+                {% else %}
+                    <p class="card-description">{{ instructor.title }}</p>
+                {% endif %}</p>
         </div>
         {% endfor %}
     </div>

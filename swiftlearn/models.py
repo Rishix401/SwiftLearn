@@ -39,7 +39,7 @@ class Course(models.Model):
         ('upcoming', 'Upcoming'),
     )
     DIFFICULTY_LEVELS = (
-        ('beginner', 'Beginner'),
+        ('introductory', 'Introductory'),
         ('intermediate', 'Intermediate'),
         ('advanced', 'Advanced'),
     )

@@ -130,7 +130,33 @@ def validate_coupon(request):
 
 @login_required
 def dashboard(request):
-    pass
+    enrollments = Enroll.objects.filter(user=request.user)
+    courses = [enroll.course for enroll in enrollments]
+
+    # Check if the user has enrolled in only one category
+    categories = Category.objects.filter(course__in=courses).distinct()
+    if len(categories) == 1:
+        rec_courses = Course.objects.filter(category=categories[0]).exclude(enroll__user=request.user)[:5]
+    else:
+        # User has enrolled in multiple categories
+        rec_courses = []
+        for category in categories:
+            c = Course.objects.filter(category=category).exclude(enroll__user=request.user)[:1]
+            rec_courses.extend(c)
+
+        # If the number of recommended courses is less than 5, then recommend courses from any category
+        num_rec_courses = len(rec_courses)
+        if num_rec_courses < 5:
+            additional_courses = Course.objects.exclude(enroll__user=request.user)[:5 - num_rec_courses]
+            rec_courses.extend(additional_courses)
+
+    # Remove duplicate courses from rec_courses
+    rec_courses = list(set(rec_courses))
+
+    return render(request, "swiftlearn/dashboard.html", {
+        'courses': courses,
+        'recommended_courses': rec_courses,
+    })
 
 
 

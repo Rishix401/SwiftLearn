@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Create the menu items
     const isAuthenticated = profileIcon.dataset.authenticated === 'True';
     const menuItems = isAuthenticated ? [
-        { text: 'Dashboard', url: '#' },
+        { text: 'Dashboard', url: '/dashboard' },
         { text: 'Profile', url: '#' },
         { text: 'Logout', url: '/logout' }
     ] : [
