@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.shortcuts import HttpResponse, HttpResponseRedirect, render
+from django.shortcuts import HttpResponse, HttpResponseRedirect, render, redirect
 from django.urls import reverse
 
 from .models import *
@@ -64,11 +64,14 @@ def category(request):
 def course(request, id):
     course = Course.objects.get(id=id)
     instructors = course.instructor.all()
+    try: enroll = Enroll.objects.get(course=course, user=request.user)
+    except: enroll = ''
     what_you_will_learn = course.what_you_will_learn.splitlines()
     return render(request, "swiftlearn/course.html", {
         "course": course,
         "instructors": instructors,
         "pointers": what_you_will_learn,
+        "enroll": enroll,
     })
 
 
@@ -77,6 +80,46 @@ def instructor(request, id):
     return render(request, "swiftlearn/instructor.html", {
         "instructor": instructor,
     })
+
+
+@login_required
+def payment(request):
+    courseId = request.GET.get("course_id")
+    print(courseId)
+    if request.method == 'POST':
+        enroll(request, courseId)
+
+    user = request.user
+    course = Course.objects.get(id=courseId, is_free=False)
+    return render(request, "swiftlearn/payment.html", {
+        "user": user,
+        "course": course,
+    })
+
+
+@login_required
+def enroll(request, course_id):
+    # ensure that only free courses are enrolled through get request
+    paidCourses = Course.objects.filter(is_free=False)
+    for course in paidCourses:
+        if course_id in course.id:
+            print(course_id, course)
+            print("true")
+    else: print("false")
+    # if request.method == 'POST':
+    #     try: 
+    #         courseId = request.POST.get("course_id")
+    #         e = Enroll.objects.create(course=Course.objects.get(id=courseId), user=request.user)
+    #     except: e = Enroll.objects.create(course=Course.objects.get(id=course_id), user=request.user)
+    #     e.save()
+    return redirect(f"/course/{courseId}")
+
+
+
+@login_required
+def dashboard(request):
+    pass
+
 
 
 def login_view(request):

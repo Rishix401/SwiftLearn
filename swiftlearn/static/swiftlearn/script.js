@@ -8,10 +8,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const menuItems = isAuthenticated ? [
         { text: 'Dashboard', url: '#' },
         { text: 'Profile', url: '#' },
-        { text: 'Logout', url: 'logout' }
+        { text: 'Logout', url: '/logout' }
     ] : [
-        { text: 'Login', url: 'login' },
-        { text: 'Register', url: 'register' }
+        { text: 'Login', url: '/login' },
+        { text: 'Register', url: '/register' }
     ];
 
     // Loop through the menu items and create links for each

@@ -36,10 +36,11 @@
                 d="M128 0c17.7 0 32 14.3 32 32V64H288V32c0-17.7 14.3-32 32-32s32 14.3 32 32V64h48c26.5 0 48 21.5 48 48v48H0V112C0 85.5 21.5 64 48 64H96V32c0-17.7 14.3-32 32-32zM0 192H448V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V192zm64 80v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V272c0-8.8-7.2-16-16-16H80c-8.8 0-16 7.2-16 16zm128 0v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V272c0-8.8-7.2-16-16-16H208c-8.8 0-16 7.2-16 16zm144-16c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V272c0-8.8-7.2-16-16-16H336zM64 400v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V400c0-8.8-7.2-16-16-16H80c-8.8 0-16 7.2-16 16zm144-16c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V400c0-8.8-7.2-16-16-16H208zm112 16v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V400c0-8.8-7.2-16-16-16H336c-8.8 0-16 7.2-16 16z" />
         </svg>
         {% if course.status == 'available' %}
-        <p class="md:text-lg">Course Started: {{ course.date|upper }}</p>
+        <p class="md:text-lg">{{ course.start_date|date:"F j, Y" }} - {{ course.end_date|date:"F j, Y" }}</p>
         {% else %}
-        <p class="md:text-lg">Register by: {{ course.date|upper }}</p>
+        <p class="md:text-lg">Register by: {{ course.date|date:"F j, Y" }}</p>
         {% endif %}
+
     </div>
     {% if course.is_free %}
     <p class="md:text-lg">FREE*</p>
@@ -75,10 +76,14 @@
     <li class="">{{ pointer }}</li>
     {% endfor %}
 </ul>
+{% if not enroll %}
 {% if course.is_free %}
-<button class="bg-red-700 hover:bg-red-800 font-[Merriweather Sans] px-6 py-4 m-7 font-semibold rounded-sm text-white text-xl">Enroll Now</button>
+<button onclick="location.href='/enroll?course_id={{course.id}}'" class="bg-red-700 hover:bg-red-800 font-[Merriweather Sans] px-6 py-4 m-7 font-semibold rounded-sm text-white text-xl">Enroll Now</button>
 {% else %}
-<button class="bg-red-700 hover:bg-red-800 font-[Merriweather Sans] px-6 py-4 m-7 font-semibold rounded-sm text-white text-xl">Purchase Now</button>
+<button onclick="location.href='/payment?course_id={{course.id}}'" class="bg-red-700 hover:bg-red-800 font-[Merriweather Sans] px-6 py-4 m-7 font-semibold rounded-sm text-white text-xl">Purchase Now</button>
+{% endif %}
+{% else %}
+<button onclick="location.href=''" class="bg-[#00262b] hover:bg-[#00262bdf] font-[Merriweather Sans] px-6 py-4 m-7 font-semibold rounded-sm text-white text-xl">View Course</button>
 {% endif %}
 
 <div class="bg-slate-100 mb-0 pt-2">
