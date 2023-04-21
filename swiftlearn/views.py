@@ -4,12 +4,24 @@ from django.db import IntegrityError
 from django.http import JsonResponse
 from django.shortcuts import HttpResponse, HttpResponseRedirect, render, redirect
 from django.urls import reverse
+from django.db.models import Count
 
 from .models import *
 
 # Create your views here.
 def index(request):
-    return render(request, "swiftlearn/index.html")
+    # get the top 3 courses based on the number of enrolled users
+    courses = Course.objects.annotate(
+        num_enrolled_users=Count('enroll', distinct=True)
+    ).order_by('-num_enrolled_users')[:2]
+
+    # add one paid course to the list
+    paid_course = Course.objects.exclude(price=0).order_by('?').first()
+    courses = list(courses) + [paid_course]
+
+    return render(request, "swiftlearn/index.html", {
+        'featuredCourses': courses,
+    })
 
 
 def catalog(request):

@@ -1,4 +1,87 @@
 {% extends 'layout.html' %}
+
+{% block style %}
+<style>
+    .card-container {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        margin: -10px;
+        height: 100%;
+    }
+
+    .card {
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        margin: 10px auto;
+        max-width: 350px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-image {
+        height: 200px;
+        object-fit: contain;
+        width: 100%;
+    }
+
+    .card-content {
+        padding: 10px;
+        flex-grow: 1;
+    }
+
+    .card-category {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+    }
+
+    .card-title {
+        color: #dc143c;
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        font-family: 'Merriweather Sans';
+    }
+
+    .card-title:hover,
+    .card-title:focus { 
+        text-decoration: underline; 
+    }
+
+    .card-description {
+        font-family: Merriweather, serif;
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 1.5;
+    }
+
+    .card-footer {
+        background-color: #f9f9f9;
+        padding: 10px;
+        flex-grow: 1;
+    }
+
+    .card-info {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .card-info li {
+        color: #888;
+        font-size: 14px;
+        font-weight: 600;
+        margin: 5px 0;
+        text-transform: uppercase;
+    }
+</style>
+{% endblock %}
+
 {% block body %}
 
 <div
@@ -57,53 +140,38 @@
 
 <h2 class="font-[Merriweather] text-xl md:text-4xl mx-4 my-2">Featured Courses</h2>
 
-<div class="cards flex flex-col md:flex-row justify-evenly mx-4">
-
-    <div class="card border-2 border-black rounded-md font-[Merriweather Sans] mb-4 mr-4 md:w-1/3">
-        <img src="https://pll.harvard.edu/sites/default/files/styles/card/public/course/078916028-crowd-people-walking-street%20%281%29.jpeg?itok=N4vMiI2V"
-            class="w-[100%]" alt="...">
-        <div class="card-body mx-4 my-2">
-            <a class="text-xl font-semibold text-[#A51C30] cursor-pointer hover:underline">Open Innovation</a>
-            <p class="card-text text-lg text-[#555]">Solve your organization’s problems by looking outside your
-                organization.</p>
-            <ul class="flex flex-col lg:flex-row list-disc lg:list-none justify-between m-4 text-[#555]">
-                <li>$950</li>
-                <li>6 WEEKS LONG</li>
-                <li>REGISTER BY JULY 3</li>
-            </ul>
+<div class="card-container my-2">
+    {% for course in featuredCourses %}
+    <div class="card">
+        {% if course.image_url %}
+        <img src="{{ course.image_url }}" alt="Product Image" class="card-image">
+        {% endif %}
+        <div class="card-content">
+            <h2 class="card-category">{{ course.category }}</h2>
+            <a href="course/{{ course.id }}" class="card-title">{{ course.title }}</a>
+            {% if course.description|length > 100 %}
+                <p class="card-description">{{ course.description|slice:100 }}...</p>
+            {% else %}
+                <p class="card-description">{{ course.description }}</p>
+            {% endif %}
         </div>
-    </div>
-
-    <div class="card border-2 border-black rounded-md font-[Merriweather Sans] mb-4 mr-4 md:w-1/3">
-        <img src="https://pll.harvard.edu/sites/default/files/styles/card/public/course/Data-Science-for-Business-Web-Header.jpg?itok=U-I2WcGn"
-            class="w-[100%]" alt="...">
-        <div class="card-body mx-4 my-2">
-            <a class="text-xl font-semibold text-[#A51C30] cursor-pointer hover:underline">Data Science for Business</a>
-            <p class="card-text text-lg text-[#555]">Learn how to effectively use data to tackle your business
-                decisions. Designed for managers, this course provides a hands-on...</p>
-            <ul class="flex flex-col lg:flex-row list-disc lg:list-none justify-between m-4 text-[#555]">
-                <li>$1,600</li>
-                <!-- <li>11 WEEKS LONG</li> -->
-                <li>REGISTER BY 1 MAY</li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="card border-2 border-black rounded-md font-[Merriweather Sans] mb-4 mr-4 md:w-1/3">
-        <img src="https://pll.harvard.edu/sites/default/files/styles/card/public/course/125091450-hiking-woman-traveler-crossroa_1.jpg?itok=TOC-bk5v"
-            class="w-[100%]" alt="...">
-        <div class="card-body mx-4 my-2">
-            <a class="text-xl font-semibold text-[#A51C30] cursor-pointer hover:underline">Managing Happiness</a>
-            <p class="card-text text-lg text-[#555]">Happiness is within your control. Write your own ending.</p>
-            <ul class="flex flex-col lg:flex-row list-disc lg:list-none justify-between m-4 text-[#555]">
+        <div class="card-footer">
+            <ul class="card-info">
+                {% if course.is_free %}
                 <li>FREE*</li>
-                <li>6 WEEKS LONG</li>
-                <li>AVAILABLE NOW</li>
+                {% else %}
+                <li>${{ course.price }}</li>
+                {% endif %}
+                {% if course.duration %}
+                <li>{{ course.duration|upper }}</li>
+                {% endif %}
+                <li>{{ course.status|upper }}</li>
             </ul>
         </div>
     </div>
-
-</div>
+    {% endfor %}
+    </div>
+<br>
 
 <div>
     <h1 class="text-center text-3xl md:text-4xl text-[Merriweather Sans] font-semibold m-2">World's Largest Super Carrer
