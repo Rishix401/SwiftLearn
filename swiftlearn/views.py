@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from django.shortcuts import HttpResponse, HttpResponseRedirect, render, redirect
 from django.urls import reverse
 from django.db.models import Count
+import pycountry
 
 from .models import *
 
@@ -109,9 +110,11 @@ def payment_and_enroll(request, course_id):
             Enroll.objects.create(course=course, user=request.user)
             return redirect(f'/course/{course_id}')
 
+    COUNTRY_CHOICES = User.COUNTRY_CHOICES
     return render(request, 'swiftlearn/payment.html', {
         'course': course,
         'course_id': course_id,
+        'COUNTRY_CHOICES': COUNTRY_CHOICES,
     })
 
 
@@ -171,6 +174,34 @@ def dashboard(request):
     })
 
 
+@login_required
+def profile(request):
+    country_code = request.user.country
+    country_name = pycountry.countries.get(alpha_2=country_code).name
+    COUNTRY_CHOICES = User.COUNTRY_CHOICES
+    return render(request, "swiftlearn/profile.html", {
+        "country_name": country_name,
+        'COUNTRY_CHOICES': COUNTRY_CHOICES,
+    })
+
+
+@login_required
+def update_profile(request):
+    if request.method == "POST":
+        first_name = request.POST["first_name"]
+        last_name = request.POST["last_name"]
+        email = request.POST["email"]
+        country = request.POST["country"]
+
+        user = User.objects.get(username=request.user)
+        user.first_name = first_name
+        user.last_name = last_name
+        user.email = email
+        user.country = country
+        user.save()
+
+        return redirect("profile")
+
 
 def login_view(request):
     if request.method == "POST":
@@ -186,7 +217,7 @@ def login_view(request):
             return HttpResponseRedirect(reverse("index"))
         else:
             return render(request, "swiftlearn/login.html", {
-                "message": "Invalid email and/or password!"
+                "message": "Invalid username and/or password!"
             })
     else:
         return render(request, "swiftlearn/login.html")
@@ -204,12 +235,12 @@ def register(request):
         email = request.POST["email"]
         first_name = request.POST["first_name"]
         last_name = request.POST["last_name"]
+        country = request.POST["country"]
 
         # Ensure password matches confirmation
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
         if password != confirmation:
-            print("password must match.")
             return render(request, "swiftlearn/register.html", {
                 "p_message": "Passwords must match."
             })
@@ -219,14 +250,16 @@ def register(request):
             user = User.objects.create_user(username, email, password)
             user.first_name = first_name
             user.last_name = last_name
+            user.country = country
             user.save()
-            print("user created")
         except IntegrityError:
-            print("username already taken.")
             return render(request, "swiftlearn/register.html", {
                 "u_message": "Username already taken."
             })
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
     else:
-        return render(request, "swiftlearn/register.html")
+        COUNTRY_CHOICES = User.COUNTRY_CHOICES
+        return render(request, "swiftlearn/register.html", {
+            "COUNTRY_CHOICES": COUNTRY_CHOICES,
+        })

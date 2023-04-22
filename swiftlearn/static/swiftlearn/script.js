@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const isAuthenticated = profileIcon.dataset.authenticated === 'True';
     const menuItems = isAuthenticated ? [
         { text: 'Dashboard', url: '/dashboard' },
-        { text: 'Profile', url: '#' },
+        { text: 'Profile', url: '/profile' },
         { text: 'Logout', url: '/logout' }
     ] : [
         { text: 'Login', url: '/login' },

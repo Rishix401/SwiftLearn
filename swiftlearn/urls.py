@@ -14,4 +14,6 @@ urlpatterns = [
     path("payment/<int:course_id>", views.payment_and_enroll, name="payment"),
     path("validate_coupon/", views.validate_coupon, name="validate_coupon"),
     path("dashboard", views.dashboard, name="dashboard"),
+    path("profile", views.profile, name="profile"),
+    path("update_profile", views.update_profile, name="update_profile"),
 ]
