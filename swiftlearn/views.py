@@ -25,6 +25,7 @@ def index(request):
     })
 
 
+
 def catalog(request):
     categories = Category.objects.all()
     courses = Course.objects.all()
@@ -63,6 +64,7 @@ def catalog(request):
     return render(request, 'swiftlearn/catalog.html', context)
 
 
+
 def category(request):
     if request.method == "POST":
         categoryInp = request.POST['category']
@@ -75,8 +77,9 @@ def category(request):
         })
 
 
-def course(request, id):
-    course = Course.objects.get(id=id)
+
+def course(request, course_id):
+    course = Course.objects.get(id=course_id)
     instructors = course.instructor.all()
     try: enroll = Enroll.objects.get(course=course, user=request.user)
     except: enroll = None
@@ -89,11 +92,13 @@ def course(request, id):
     })
 
 
-def instructor(request, id):
-    instructor = Instructor.objects.get(id=id)
+
+def instructor(request, instructor_id):
+    instructor = Instructor.objects.get(id=instructor_id)
     return render(request, "swiftlearn/instructor.html", {
         "instructor": instructor,
     })
+
 
 
 @login_required
@@ -102,13 +107,13 @@ def payment_and_enroll(request, course_id):
 
     if course.is_free:
         Enroll.objects.create(course=course, user=request.user)
-        return redirect(f'/course/{course_id}')
+        return redirect(f'/catalog/{course_id}')
 
     if request.method == 'POST' and (not course.is_free):
             # Perform payment logic here
             # NOTE: Not performing payment logic in this project
             Enroll.objects.create(course=course, user=request.user)
-            return redirect(f'/course/{course_id}')
+            return redirect(f'/catalog/{course_id}')
 
     COUNTRY_CHOICES = User.COUNTRY_CHOICES
     return render(request, 'swiftlearn/payment.html', {
@@ -116,6 +121,7 @@ def payment_and_enroll(request, course_id):
         'course_id': course_id,
         'COUNTRY_CHOICES': COUNTRY_CHOICES,
     })
+
 
 
 @login_required
@@ -142,6 +148,8 @@ def validate_coupon(request):
             'valid': False,
             'error_message': 'Coupon code is required.',
         })
+
+
 
 @login_required
 def dashboard(request):
@@ -174,6 +182,7 @@ def dashboard(request):
     })
 
 
+
 @login_required
 def profile(request):
     country_code = request.user.country
@@ -183,6 +192,7 @@ def profile(request):
         "country_name": country_name,
         'COUNTRY_CHOICES': COUNTRY_CHOICES,
     })
+
 
 
 @login_required
@@ -201,6 +211,7 @@ def update_profile(request):
         user.save()
 
         return redirect("profile")
+
 
 
 def login_view(request):
@@ -223,10 +234,12 @@ def login_view(request):
         return render(request, "swiftlearn/login.html")
 
 
+
 @login_required
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
+
 
 
 def register(request):
@@ -263,3 +276,4 @@ def register(request):
         return render(request, "swiftlearn/register.html", {
             "COUNTRY_CHOICES": COUNTRY_CHOICES,
         })
+

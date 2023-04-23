@@ -220,7 +220,7 @@
         {% endif %}
         <div class="card-content">
             <h2 class="card-category">{{ course.category }}</h2>
-            <a href="course/{{ course.id }}" class="card-title">{{ course.title }}</a>
+            <a href="catalog/{{ course.id }}" class="card-title">{{ course.title }}</a>
             {% if course.description|length > 100 %}
                 <p class="card-description">{{ course.description|slice:100 }}...</p>
             {% else %}
