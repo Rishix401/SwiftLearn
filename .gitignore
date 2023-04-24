@@ -6,3 +6,4 @@ capstone/__init__.py
 tailwind/
 course/__pycache__
 course/migrations
+course/__init__.py

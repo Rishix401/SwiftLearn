@@ -1,6 +1,65 @@
-{% extends 'swiftlearn/layout.html' %}
+{% extends 'course/layout.html' %}
+
+{% block style %}
+<style>
+    .border-bottom {
+        border-bottom: 3px solid black;
+    }
+</style>
+{% endblock %}
 
 {% block body %}
+
+<div class="nav">
+    <h1 class="p-4 pb-1 font-[Merriweather Sans] text-xl md:text-2xl lg:text-3xl font-medium">{{course.title}}</h1>
+    <div class="flex px-4 border-b-[1px] border-[#eaeaea] mb-4">
+        <ul class="flex text-lg md:text-xl">
+            <a href="#" id="courses-link" class="hover:bg-slate-200 px-4 p-3">
+                <li>Course</li>
+            </a>
+            <a href="#" id="dates-link" class="hover:bg-slate-200 px-4 p-3">
+                <li>Dates</li>
+            </a>
+            <a href="#" id="discussions-link" class="hover:bg-slate-200 px-4 p-3">
+                <li>Discussion</li>
+            </a>
+            <a href="#" id="faqs-link" class="hover:bg-slate-200 px-4 p-3">
+                <li>FAQs</li>
+            </a>
+        </ul>
+    </div>
+</div>
+
+<div id="courses-container">
+    <h1 class="p-4 pb-1 font-[Merriweather Sans] text-2xl md:text-3xl lg:text-4xl font-semibold opacity-90">
+        {{course.title}}</h1>
+    <div id="lectures-link" class="m-4 border-[1px] border-gray-200">
+        <div class="py-4 px-8 border-b-[1px] border-gray-200">
+            <p class="text-xl font-medium">Lectures</p>
+        </div>
+        {% for lecture in lectures %}
+        <div class="flex border-b-[1px] border-gray-200 mx-3">
+            {% if lecture in watched_lectures %}
+            <svg class="w-[18px] ml-2 fill-green-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"/></svg>
+            {% else %}
+            <svg class="w-[18px] ml-2 fill-green-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L369 209z"/></svg>
+            {% endif %}
+            <div class="py-2 mx-4">
+                <a href="/course/{{course.id}}/lectures/{{lecture.id}}"
+                    class="text-blue-700 hover:underline text-lg ">{{lecture.title}}</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div id="dates-container">
+
+</div>
+
+
+<div id="discussions-container"></div>
+<div id="faqs-container"></div>
 
 
 
