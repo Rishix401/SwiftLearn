@@ -6,6 +6,7 @@ from django.shortcuts import HttpResponse, HttpResponseRedirect, render, redirec
 from django.http import HttpResponseForbidden
 from django.urls import reverse
 from django.db.models import Count
+import json
 
 from swiftlearn.models import *
 from .models import *
@@ -45,6 +46,7 @@ def lecture(request, course_id, lecture_id):
     course = Course.objects.get(id=course_id)
     lecture = Lecture.objects.get(id=lecture_id)
     watched = Watched.objects.filter(lecture=lecture)
+    notes = Note.objects.filter(lecture=lecture, user=request.user).order_by('-id')
 
     try:
         previous_lecture_id = Lecture.objects.filter(course=course, order__lt=lecture.order).order_by('-order')[0].id
@@ -66,4 +68,46 @@ def lecture(request, course_id, lecture_id):
         "watched": watched,
         "previous_lecture_id": previous_lecture_id,
         "next_lecture_id": next_lecture_id,
+        "notes": notes,
     })
+
+
+def create_note(request, course_id, lecture_id):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        title = data.get('title')
+        desc = data.get('desc')
+        noteId = data.get('noteId')
+        lecture = Lecture.objects.get(id=lecture_id)
+
+        if noteId:
+            note = Note.objects.get(id=noteId)
+            note.title = title
+            note.desc = desc
+            note.save()
+        else: 
+            note = Note.objects.create(lecture=lecture, user=request.user, title=title, desc=desc)
+        
+        return JsonResponse({'status': 'success'}, status=201)
+    
+    return JsonResponse(
+        {'status': 'error', 
+         'message': 'Invalid request method'}, 
+         status=400)
+
+def delete_note(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        noteId = data.get('noteId')
+
+        note = Note.objects.get(id=noteId)
+        print(note)
+        note.delete()
+        
+        return JsonResponse({'status': 'success'}, status=201)
+    
+    return JsonResponse(
+        {'status': 'error', 
+         'message': 'Invalid request method'}, 
+         status=400)
+

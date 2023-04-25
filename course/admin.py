@@ -18,6 +18,12 @@ class WatchedAdmin(admin.ModelAdmin):
     search_fields = ('user__username', 'lecture__title')
     list_filter = ('lecture__course',)
 
+class NoteAdmin(admin.ModelAdmin):
+    list_display = ('user', 'lecture', 'title', 'desc')
+    search_fields = ('title', 'desc',)
+    list_filter = ('user', 'lecture',)
+
 admin.site.register(Lecture, LectureAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(Watched, WatchedAdmin)
+admin.site.register(Note, NoteAdmin)

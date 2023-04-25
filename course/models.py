@@ -69,3 +69,16 @@ class Watched(models.Model):
     def __str__(self):
         return f"{self.user} - {self.lecture}"
 
+class Note(models.Model):
+    lecture = models.ForeignKey(Lecture, on_delete=models.CASCADE, related_name='notes')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notes')
+    title = models.CharField(max_length=40)
+    desc = models.CharField(max_length=100)
+
+    class Meta:
+        verbose_name = 'Note'
+        verbose_name_plural = 'Notes'
+
+    def __str__(self):
+        return f"{self.user} - {self.lecture} - {self.title}"
+
