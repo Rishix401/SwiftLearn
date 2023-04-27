@@ -47,8 +47,10 @@ class Lecture(models.Model):
 class Comment(models.Model):
     lecture = models.ForeignKey(Lecture, on_delete=models.CASCADE, related_name='comments')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
-    comment = models.TextField()
-    rating = models.IntegerField(default=0, validators=[MinValueValidator(1), MaxValueValidator(5)])
+    comment = models.TextField(blank=True, null=True)
+    rating = models.IntegerField(default=5, validators=[MinValueValidator(1), MaxValueValidator(5)])
+    timestamp = models.DateTimeField(auto_now_add=True)
+    is_edited = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.user.username} - {self.lecture.title}"

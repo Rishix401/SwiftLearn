@@ -47,9 +47,11 @@ document.addEventListener('DOMContentLoaded', function () {
         hamburgerMenu.classList.toggle('hidden');
     });
 
-
-    document.getElementById('sm-filter-btn').addEventListener('click', function() {
-        const filterMenu = document.getElementById("filterMenu");
-        filterMenu.classList.toggle("hidden");
-    })
+    try {
+        document.getElementById('sm-filter-btn').addEventListener('click', function() {
+            const filterMenu = document.getElementById("filterMenu");
+            filterMenu.classList.toggle("hidden");
+        })
+    } catch(error) { console.log(error) }
+    
 });

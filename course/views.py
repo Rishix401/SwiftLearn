@@ -47,6 +47,8 @@ def lecture(request, course_id, lecture_id):
     lecture = Lecture.objects.get(id=lecture_id)
     watched = Watched.objects.filter(lecture=lecture)
     notes = Note.objects.filter(lecture=lecture, user=request.user).order_by('-id')
+    comments = Comment.objects.filter(lecture=lecture)
+    userComment = Comment.objects.filter(lecture=lecture, user=request.user).first()
 
     try:
         previous_lecture_id = Lecture.objects.filter(course=course, order__lt=lecture.order).order_by('-order')[0].id
@@ -69,6 +71,8 @@ def lecture(request, course_id, lecture_id):
         "previous_lecture_id": previous_lecture_id,
         "next_lecture_id": next_lecture_id,
         "notes": notes,
+        "comments": comments,
+        "userComment": userComment,
     })
 
 
@@ -86,7 +90,7 @@ def create_note(request, course_id, lecture_id):
             note.desc = desc
             note.save()
         else: 
-            note = Note.objects.create(lecture=lecture, user=request.user, title=title, desc=desc)
+           Note.objects.create(lecture=lecture, user=request.user, title=title, desc=desc)
         
         return JsonResponse({'status': 'success'}, status=201)
     
@@ -111,3 +115,22 @@ def delete_note(request):
          'message': 'Invalid request method'}, 
          status=400)
 
+@enrolled_required
+def review(request, course_id, lecture_id):
+    if request.method == 'POST':
+        rating = request.POST.get('rating')
+        comment = request.POST.get('comment')
+        lecture = Lecture.objects.get(id=lecture_id)
+
+        cmnt = Comment.objects.filter(lecture=lecture, user=request.user).first()
+        if cmnt:
+            cmnt.rating = rating
+            cmnt.comment = comment
+            cmnt.is_edited = True
+            cmnt.save()
+        else:
+            Comment.objects.create(lecture=lecture, user=request.user, rating=rating, comment=comment)
+        
+        return redirect(f'/course/{course_id}/lectures/{lecture_id}')
+    
+    return redirect(f'/course/{course_id}/lectures/{lecture_id}')
