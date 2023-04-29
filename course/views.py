@@ -45,10 +45,16 @@ def course_view(request, course_id):
 def lecture(request, course_id, lecture_id):
     course = Course.objects.get(id=course_id)
     lecture = Lecture.objects.get(id=lecture_id)
+    print(lecture.rating)
+    lecture.calculate_overall_rating()
+    print(lecture.rating)
+    width = ( lecture.rating / 5 ) * 100
+    print(width)
     watched = Watched.objects.filter(lecture=lecture)
     notes = Note.objects.filter(lecture=lecture, user=request.user).order_by('-id')
     comments = Comment.objects.filter(lecture=lecture)
     userComment = Comment.objects.filter(lecture=lecture, user=request.user).first()
+
 
     try:
         previous_lecture_id = Lecture.objects.filter(course=course, order__lt=lecture.order).order_by('-order')[0].id
@@ -67,6 +73,7 @@ def lecture(request, course_id, lecture_id):
     return render(request, "course/lecture.html", {
         "course": course,
         "lecture": lecture,
+        "width": width,
         "watched": watched,
         "previous_lecture_id": previous_lecture_id,
         "next_lecture_id": next_lecture_id,

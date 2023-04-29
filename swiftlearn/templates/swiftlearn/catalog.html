@@ -232,7 +232,7 @@
                 {% if course.is_free %}
                 <li>FREE*</li>
                 {% else %}
-                <li>${{ course.price }}</li>
+                <li>${{ course.get_display_price }}</li>
                 {% endif %}
                 {% if course.duration %}
                 <li>{{ course.duration|upper }}</li>

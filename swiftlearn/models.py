@@ -2,8 +2,12 @@ from django.contrib.auth.models import AbstractUser, User
 from django.utils import timezone
 from django.db import models
 
-# Create your models here.
+import stripe
+from django.conf import settings
 
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
+# Create your models here.
 class User(AbstractUser):
     COUNTRY_CHOICES = (
         ("AF", "Afghanistan"),
@@ -297,7 +301,7 @@ class Course(models.Model):
 
     title = models.CharField(max_length=200)
     description = models.TextField(max_length=4000)
-    price = models.DecimalField(max_digits=6, decimal_places=2)
+    price = models.IntegerField() # cents    
     is_free = models.BooleanField(default=False)
     status = models.CharField(choices=STATUS_CHOICES, max_length=20)
     start_date = models.DateField()
@@ -313,6 +317,9 @@ class Course(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def get_display_price(self):
+        return "{0:.2f}".format(self.price / 100)
 
     class Meta:
         verbose_name = "Course"
@@ -347,19 +354,13 @@ class Cart(models.Model):
 
 class Coupon(models.Model):
     code = models.CharField(max_length=50, unique=True)
-    discount_percent = models.PositiveSmallIntegerField()
-    valid_from = models.DateTimeField()
-    valid_to = models.DateTimeField()
-
+    percent_off = models.PositiveIntegerField()
+    duration = models.CharField(max_length=50, choices=[('once', 'Once'), ('forever', 'Forever')], default='once')
+    duration_in_months = models.PositiveIntegerField(blank=True, null=True)
+    redeem_by = models.DateTimeField(blank=True, null=True)
+        
     def __str__(self):
         return self.code
-
-    def is_valid(self):
-        now = timezone.now()
-        return self.valid_from <= now and self.valid_to >= now
-
-    def discount_amount(self, total_price):
-        return (self.discount_percent / 100) * total_price
 
     class Meta:
         verbose_name = "Coupon"

@@ -1,19 +1,25 @@
 from django.urls import path
 
-from .import views
+from .views import *
 
 urlpatterns = [
-    path("", views.index, name="index"),
-    path("login", views.login_view, name="login"),
-    path("logout", views.logout_view, name="logout"),
-    path("register", views.register, name="register"),
-    path("catalog", views.catalog, name="catalog"),
-    path("category", views.category, name="category"),
-    path("catalog/<int:course_id>", views.course, name="course"),
-    path("instructor/<int:instructor_id>", views.instructor, name="instructor"),
-    path("payment/<int:course_id>", views.payment_and_enroll, name="payment"),
-    path("validate_coupon/", views.validate_coupon, name="validate_coupon"),
-    path("dashboard", views.dashboard, name="dashboard"),
-    path("profile", views.profile, name="profile"),
-    path("update_profile", views.update_profile, name="update_profile"),
+    path("", index, name="index"),
+    path("login", login_view, name="login"),
+    path("logout", logout_view, name="logout"),
+    path("register", register, name="register"),
+
+    path("catalog", catalog, name="catalog"),
+    path("category", category, name="category"),
+    path("catalog/<int:course_id>", course, name="course"),
+    path("instructor/<int:instructor_id>", instructor, name="instructor"),
+    path("enroll/<int:course_id>", enroll, name="enroll"),
+    path("dashboard", dashboard, name="dashboard"),
+    path("profile", profile, name="profile"),
+    path("update_profile", update_profile, name="update_profile"),
+
+    path("create-checkout-session/<pk>/", CreateCheckoutSessionView.as_view(), name="create-checkout-session"),
+    path("success/<course_id>/", successView, name="successView"),
+    path("cancel/<course_id>/", cancelView, name="cancelView"),
+    path('webhooks/stripe', stripe_webhook, name="stripe-webhook"),
+    path('create-coupon/', create_coupon, name="create_coupon"),
 ]

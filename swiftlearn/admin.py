@@ -35,7 +35,7 @@ class EnrollAdmin(admin.ModelAdmin):
     search_fields = ('course__title', 'user__username',)
 
 class CouponAdmin(admin.ModelAdmin):
-    list_display = ('code', 'discount_percent', 'valid_from', 'valid_to',)
+    list_display = ('code', 'percent_off', 'redeem_by',)
     search_fields = ('code',)
 
 class CategoryAdmin(admin.ModelAdmin):

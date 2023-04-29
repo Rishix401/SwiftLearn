@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Create Coupon</title>
+  </head>
+  <body>
+    <h1>Create Coupon</h1>
+    <form method="POST" action="{% url 'create_coupon' %}">
+      {% csrf_token %}
+      <label for="code">Code:</label>
+      <input type="text" name="code" required><br>
+      <label for="percent_off">Percent off:</label>
+      <input type="number" name="percent_off" required><br>
+      <label for="duration">Duration:</label>
+      <select name="duration" required>
+        <option value="once">Once</option>
+        <option value="forever">Forever</option>
+        <option value="repeating">Repeating</option>
+      </select><br>
+      <label for="duration_in_months">Duration in months:</label>
+      <input type="number" name="duration_in_months"><br>
+      <label for="redeem_by">Redeem by:</label>
+      <input type="datetime-local" name="redeem_by"><br>
+      <button type="submit">Create</button>
+    </form>
+  </body>
+</html>

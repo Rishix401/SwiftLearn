@@ -30,8 +30,7 @@
 
 <div class="font-[Merriweather] px-4 flex flex-wrap items-center justify-evenly mt-4">
     <div class="flex space-x-2">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"
-            style="width: 25px; height: 25px;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" style="width: 25px; height: 25px;">
             <path
                 d="M128 0c17.7 0 32 14.3 32 32V64H288V32c0-17.7 14.3-32 32-32s32 14.3 32 32V64h48c26.5 0 48 21.5 48 48v48H0V112C0 85.5 21.5 64 48 64H96V32c0-17.7 14.3-32 32-32zM0 192H448V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V192zm64 80v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V272c0-8.8-7.2-16-16-16H80c-8.8 0-16 7.2-16 16zm128 0v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V272c0-8.8-7.2-16-16-16H208c-8.8 0-16 7.2-16 16zm144-16c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V272c0-8.8-7.2-16-16-16H336zM64 400v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V400c0-8.8-7.2-16-16-16H80c-8.8 0-16 7.2-16 16zm144-16c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V400c0-8.8-7.2-16-16-16H208zm112 16v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V400c0-8.8-7.2-16-16-16H336c-8.8 0-16 7.2-16 16z" />
         </svg>
@@ -45,7 +44,7 @@
     {% if course.is_free %}
     <p class="md:text-lg">FREE*</p>
     {% else %}
-    <p class="md:text-lg">${{course.price}}</p>
+    <p class="md:text-lg">${{course.get_display_price}}</p>
     {% endif %}
     <p class="md:text-lg">ONLINE</p>
 </div>
@@ -76,15 +75,55 @@
     <li class="">{{ pointer }}</li>
     {% endfor %}
 </ul>
+
 {% if not enroll %}
+
 {% if course.is_free %}
-<button onclick="location.href='/payment/{{course.id}}'" class="bg-red-700 hover:bg-red-800 font-[Merriweather Sans] px-6 py-4 m-7 font-semibold rounded-sm text-white text-xl">Enroll Now</button>
+<form action="{% url 'enroll' course.id %}" method="POST">
+    {% csrf_token %}
+    <input type="submit" value="Enroll Now" class="bg-red-700 hover:bg-red-800 font-[Merriweather Sans] px-6 py-4 m-7 font-semibold rounded-sm text-white text-xl">
+</form>
 {% else %}
-<button onclick="location.href='/payment/{{course.id}}'" class="bg-red-700 hover:bg-red-800 font-[Merriweather Sans] px-6 py-4 m-7 font-semibold rounded-sm text-white text-xl">Purchase Now</button>
+<script src="https://js.stripe.com/v3/"></script>
+<div>
+    <button type="button" id="checkout-button"
+        class="bg-red-700 hover:bg-red-800 font-[Merriweather Sans] px-6 py-4 m-7 font-semibold rounded-sm text-white text-xl">
+        Purchase Now</button>
+    {% csrf_token %}
+</div>
+
+<script>
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    // Create an instance of the Stripe object with your publishable API key
+    var stripe = Stripe("{{ STRIPE_PUBLIC_KEY }}")
+    var checkoutButton = document.getElementById("checkout-button");
+    checkoutButton.addEventListener("click", function () {
+        fetch("{% url 'create-checkout-session' course.id %}", {
+            method: "POST",
+            headers: {
+                'X-CSRFTOken': csrftoken,
+            }
+        })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (session) {
+                return stripe.redirectToCheckout({ sessionId: session.id });
+            })
+            .then(function (result) {
+                //
+            })
+    })
+</script>
+
 {% endif %}
+
 {% else %}
-<button onclick="location.href='/course/{{course.id}}'" class="bg-[#00262b] hover:bg-[#00262bdf] font-[Merriweather Sans] px-6 py-4 m-7 font-semibold rounded-sm text-white text-xl">View Course</button>
+<div class="m-7">
+    <a href="/course/{{ course.id }}" class="bg-[#00262b] hover:bg-[#00262bdf] font-[Merriweather Sans] px-6 py-4 font-semibold rounded-sm text-white text-xl">View Course</a>
+</div>
 {% endif %}
+
 
 <div class="bg-slate-100 mb-0 pt-2">
     <h1 class="text-2xl font-[Merriweather] text-center my-10">Instructors</h1>
@@ -92,13 +131,14 @@
         {% for instructor in instructors %}
         <div class="text-center mb-7">
             <img src="{{ instructor.image_url }}" alt="image" style="border-radius: 50%; margin: 0 auto;">
-            <a href="/instructor/{{instructor.id}}" class="text-xl font-[Merriweather] text-red-700 hover:underline">{{ instructor.name }}</a>
+            <a href="/instructor/{{instructor.id}}" class="text-xl font-[Merriweather] text-red-700 hover:underline">
+                {{ instructor.name }}</a>
             <p class="card-text font-[Merriweather Sans] text-lg font-light mt-2">
                 {% if instructor.title|length > 60 %}
-                    <p class="card-description">{{ instructor.title|slice:60 }}...</p>
-                {% else %}
-                    <p class="card-description">{{ instructor.title }}</p>
-                {% endif %}</p>
+            <p class="card-description">{{ instructor.title|slice:60 }}...</p>
+            {% else %}
+            <p class="card-description">{{ instructor.title }}</p>
+            {% endif %}</p>
         </div>
         {% endfor %}
     </div>

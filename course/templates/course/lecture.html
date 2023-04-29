@@ -140,7 +140,14 @@
         <p class="text-xl mb-2 font-medium mt-6">REVIEWS: </p>
         <div class="flex">
             <div class="left">
-
+              <div class="inline-block relative w-40">
+                <div class="absolute top-0 left-0">
+                  <img src="https://cdn.toprankers.net.in/svg/star-o.svg" alt="Gray star" class="w-full h-10" />
+                </div>
+                <div class="absolute top-0 left-0 bg-[url('https://cdn.toprankers.net.in/svg/star-fill.svg')] bg-cover bg-no-repeat h-9" data-width="{{width}}%" id="orange-star-box">
+                </div>
+              </div>
+              
             </div>
             <div class="right">
 
@@ -245,6 +252,9 @@
 
 
 </script> -->
-
+<script>
+  orangeStar = document.getElementById('orange-star-box');
+  orangeStar.style.width = orangeStar.dataset.width;
+</script>
 
 {% endblock %}

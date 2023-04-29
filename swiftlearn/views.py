@@ -5,9 +5,21 @@ from django.http import JsonResponse
 from django.shortcuts import HttpResponse, HttpResponseRedirect, render, redirect
 from django.urls import reverse
 from django.db.models import Count
+from django.views import generic
+from django.core.mail import send_mail
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse
+from django.contrib.admin.views.decorators import staff_member_required
+
 import pycountry
+import stripe
 
 from .models import *
+
+# This is your test secret API key.
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
 
 # Create your views here.
 def index(request):
@@ -89,6 +101,7 @@ def course(request, course_id):
         "instructors": instructors,
         "pointers": what_you_will_learn,
         "enroll": enroll,
+        "STRIPE_PUBLIC_KEY": settings.STRIPE_PUBLIC_KEY,
     })
 
 
@@ -100,54 +113,148 @@ def instructor(request, instructor_id):
     })
 
 
+@staff_member_required
+def create_coupon(request):
+    if request.method == 'POST':
+        # Get the coupon data from the request
+        code = request.POST.get('code')
+        percent_off = request.POST.get('percent_off')
+        duration = request.POST.get('duration')
+        duration_in_months = request.POST.get('duration_in_months')
+        redeem_by = request.POST.get('redeem_by')
+        
+        # Create a Coupon object in the database
+        coupon = Coupon(
+            code=code,
+            percent_off=percent_off,
+            duration=duration,
+            duration_in_months=duration_in_months if duration_in_months else None,
+            redeem_by=redeem_by if redeem_by else None,
+        )
+        coupon.save()
+        
+        # Create the coupon in Stripe
+        try:
+            coupon = stripe.Coupon.retrieve(code)
+        except stripe.error.InvalidRequestError:
+            if duration == 'once' or duration == 'forever':
+                coupon = stripe.Coupon.create(
+                    id=code,
+                    percent_off=percent_off,
+                    duration=duration,
+                    redeem_by=redeem_by.timestamp() if redeem_by else None
+                )
+            else:
+                coupon = stripe.Coupon.create(
+                    id=code,
+                    percent_off=percent_off,
+                    duration=duration,
+                    duration_in_months=duration_in_months,
+                    redeem_by=redeem_by.timestamp() if redeem_by else None
+                )
+
+        # Create the promotion code in Stripe
+        promotion_code = stripe.PromotionCode.create(
+            coupon=code,
+            code=code
+        )
+        return JsonResponse({'success': True})
+
+    return render(request, 'swiftlearn/create_coupon.html')
+
+
+def successView(request, course_id):
+    return render(request, "swiftlearn/success.html", { "course_id": course_id, })
+
+def cancelView(request, course_id):
+        return render(request, "swiftlearn/cancel.html", { "course_id": course_id, })
+
+# stripe listen --forward-to localhost:8000/webhooks/stripe
+class CreateCheckoutSessionView(generic.View):
+    def post(self, request, *args, **kwargs):
+        course_id = self.kwargs["pk"]
+
+        course = Course.objects.get(id=course_id)
+        YOUR_DOMAIN = "http://127.0.0.1:8000"
+
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[
+                {
+                    'price_data': {
+                        'currency': 'usd',
+                        'unit_amount': course.price,
+                        'product_data': {
+                            'name': course.title,
+                            'images': [course.image_url],
+                        }
+                        },
+                    'quantity': 1,
+                },
+            ],
+            metadata={
+                "course_id": course.id,
+                "user_id": request.user.id,
+            },
+            mode='payment',
+            allow_promotion_codes= True,
+            invoice_creation={"enabled": True},
+            success_url=YOUR_DOMAIN + f'/success/{course.id}/',
+            cancel_url=YOUR_DOMAIN + f'/cancel/{course.id}/',
+        )
+
+        return JsonResponse({
+            'id': checkout_session.id,
+        })
+
+
+@csrf_exempt
+def stripe_webhook(request):
+    payload = request.body
+    sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+    event = None
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
+        )
+    except ValueError as e:
+        # Invalid payload
+        return HttpResponse(staus=400)
+    except stripe.error.SignatureVerificationError as e:
+        # Invalid signature
+        return HttpResponse(status=400)
+    
+    # Handle the checkout.session.completed event
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+
+        # Fulfill the purchase
+        customer_email = session["customer_details"]["email"]
+        course_id = session["metadata"]["course_id"]
+        user_id = session["metadata"]["user_id"]
+
+        course = Course.objects.get(id=course_id) # Get the course object
+        user = User.objects.get(id=user_id) # Get the user object
+        Enroll.objects.create(course=course, user=user) # Enroll the user in course
+
+        send_mail(
+            subject=f"Congrats! You're enrolled in {course.title}",
+            message=f"Thanks for your purchase! Start Learning: http://127.0.0.1:8000/course/{course_id}",
+            recipient_list=[customer_email],
+            from_email="bot@swift.com",
+        )
+
+    return HttpResponse(status=200)
+
 
 @login_required
-def payment_and_enroll(request, course_id):
+def enroll(request, course_id):
     course = Course.objects.get(id=course_id)
 
     if course.is_free:
         Enroll.objects.create(course=course, user=request.user)
         return redirect(f'/catalog/{course_id}')
-
-    if request.method == 'POST' and (not course.is_free):
-            # Perform payment logic here
-            # NOTE: Not performing payment logic in this project
-            Enroll.objects.create(course=course, user=request.user)
-            return redirect(f'/catalog/{course_id}')
-
-    COUNTRY_CHOICES = User.COUNTRY_CHOICES
-    return render(request, 'swiftlearn/payment.html', {
-        'course': course,
-        'course_id': course_id,
-        'COUNTRY_CHOICES': COUNTRY_CHOICES,
-    })
-
-
-
-@login_required
-def validate_coupon(request):
-    coupon_code = request.GET.get('code', None)
-    if coupon_code:
-        try: coupon = Coupon.objects.get(code=coupon_code)
-        except: return JsonResponse({
-            'valid': False,
-            'error_message': 'Incorrect coupon code.',
-        })
-        if coupon.is_valid():
-            return JsonResponse({
-                'valid': True,
-                'discount_percent': coupon.discount_percent,
-            })
-        else:
-            return JsonResponse({
-                'valid': False,
-                'error_message': 'Coupon is no longer valid.',
-            })
-    else:
-        return JsonResponse({
-            'valid': False,
-            'error_message': 'Coupon code is required.',
-        })
 
 
 
