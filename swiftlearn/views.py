@@ -1,21 +1,21 @@
+from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.db import IntegrityError
-from django.http import JsonResponse
-from django.shortcuts import HttpResponse, HttpResponseRedirect, render, redirect
-from django.urls import reverse
-from django.db.models import Count
-from django.views import generic
 from django.core.mail import send_mail
-from django.conf import settings
+from django.db import IntegrityError
+from django.db.models import Count
+from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, redirect
+from django.urls import reverse
+from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponse
 from django.contrib.admin.views.decorators import staff_member_required
 
 import pycountry
 import stripe
 
 from .models import *
+
 
 # This is your test secret API key.
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -113,6 +113,7 @@ def instructor(request, instructor_id):
     })
 
 
+
 @staff_member_required
 def create_coupon(request):
     if request.method == 'POST':
@@ -163,11 +164,13 @@ def create_coupon(request):
     return render(request, 'swiftlearn/create_coupon.html')
 
 
+
 def successView(request, course_id):
     return render(request, "swiftlearn/success.html", { "course_id": course_id, })
 
 def cancelView(request, course_id):
         return render(request, "swiftlearn/cancel.html", { "course_id": course_id, })
+
 
 # stripe listen --forward-to localhost:8000/webhooks/stripe
 class CreateCheckoutSessionView(generic.View):
@@ -293,7 +296,9 @@ def dashboard(request):
 @login_required
 def profile(request):
     country_code = request.user.country
-    country_name = pycountry.countries.get(alpha_2=country_code).name
+    try: country_name = pycountry.countries.get(alpha_2=country_code).name
+    except: country_name = None
+    
     COUNTRY_CHOICES = User.COUNTRY_CHOICES
     return render(request, "swiftlearn/profile.html", {
         "country_name": country_name,

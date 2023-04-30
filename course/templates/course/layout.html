@@ -16,6 +16,24 @@
     <script src="{% static 'swiftlearn/script.js' %}"></script>
     <script src="{% static 'course/main.js' %}"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/video.js/7.12.0/video-js.min.css">
+    <style>
+        html {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+        }
+        main {
+            flex: 1 0 auto;
+        }
+
+        footer {
+            flex-shrink: 0;
+        }
+    </style>
 </head>
 
 <body>
@@ -66,8 +84,10 @@
         </ul>
     </div>
 
-    {% block body %}
-    {% endblock %}
+    <main>
+        {% block body %}
+        {% endblock %}
+    </main>
 
     <footer class="bg-[#2668B3] flex flex-col md:flex-row p-4 text-white font-[Merriweather]" style="clear: both">
         <div class="left md:w-[70%] px-4">

@@ -152,49 +152,6 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelector('#lectures-link').lastElementChild.style.border = 'none';
   } catch (error) { console.log(error) }
 
-  try {
-    // Get references to the video player and relevant IDs.
-    let myPlayer = videojs('my-video');
-    let userID = "{{user.id}}";
-    let lectureID = "{{lecture.id}}";
-    let key = `progress-${userID}-${lectureID}`;
-    let lastProgress = localStorage.getItem(key);
-    let hasBeenPlayed = false;
-
-    // When the video starts playing, set the time to the last saved progress if it hasn't been played before.
-    myPlayer.on('play', function () {
-      if (!hasBeenPlayed) {
-        myPlayer.currentTime(lastProgress);
-        hasBeenPlayed = true;
-      }
-    });
-
-    // Whenever the video time updates, save the current time to local storage.
-    myPlayer.on('timeupdate', function () {
-      if (!myPlayer.ended()) {
-        localStorage.setItem(key, myPlayer.currentTime());
-      }
-    });
-
-    // When the video ends, set the progress to 0 and submit a form containing the watched video data.
-    myPlayer.on('ended', function () {
-      localStorage.setItem(key, 0);
-
-      let form = document.getElementById('watched-form');
-      let formData = new FormData(form);
-
-      fetch(form.action, {
-        method: form.method,
-        body: formData
-      }).then(response => {
-        console.log(response);
-      }).catch(error => {
-        console.log(error);
-      });
-    });
-
-  } catch (error) { console.log(error) }
-
 
   try {
     // add, edit and delete note logic. 
@@ -278,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </div>
             <textarea name="comment" id="comment" rows="4" placeholder="Tell us about your experience (Maximum 350 characters)" class="font-mono p-4 w-full overflow-auto border-[1px] border-[#cad8dd] rounded-sm outline-none"></textarea>
             <div class="flex justify-between">
-              <p>Number of characters left - <span id="chars-left">350</span></p>
+              <p>Number of characters left - <span id="chars-left">${350-comment.length}</span></p>
               <div class="flex space-x-3">
                 <button id="update-btn" class="bg-[#30bbe2] text-white py-1.5 px-3 rounded-md" type="submit">UPDATE</button>
                 <button id="cancel-btn" class="bg-[#30bbe2] text-white py-1.5 px-3 rounded-md" type="button">CANCEL</button>
@@ -300,8 +257,33 @@ document.addEventListener('DOMContentLoaded', function () {
 
       document.querySelector('#cancel-btn').addEventListener('click', function () {
         editForm.remove();
+        userCmnt.style.display = 'block'
       })
     });
   } catch (error) { console.log(error) }
+
+
+  try {
+    // Display rating of other users
+    const userRatings = document.querySelectorAll('.user-ratings');
+    userRatings.forEach((ratingContainer) => {
+      const rating = parseInt(ratingContainer.dataset.rating);
+      for (let i = 1; i <= 5; i++) {
+        const star = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        star.setAttribute('class', 'w-4 h-4 cursor-pointer');
+        star.setAttribute('viewBox', '0 0 576 512');
+        const starPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        starPath.setAttribute('class', 'star');
+        starPath.setAttribute('d', 'M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z');
+        star.appendChild(starPath);
+        if (i <= rating) {
+          starPath.setAttribute('class', 'star fill-[#FBBA02]');
+        } else {
+          starPath.setAttribute('class', 'star fill-[#DDDDDD]');
+        }
+        ratingContainer.appendChild(star);
+      }
+    });
+  } catch(error) { console.log(error) }
 
 });
