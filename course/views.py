@@ -34,6 +34,7 @@ def course_view(request, course_id):
     lectures = Lecture.objects.filter(course=course)
     watched = Watched.objects.filter(user=request.user, lecture__in=lectures)
     watched_lectures = [watched_item.lecture for watched_item in watched]
+
     return render(request, "course/coursePage.html", {
             "course": course,
             "lectures": lectures,

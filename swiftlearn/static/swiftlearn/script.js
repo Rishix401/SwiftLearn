@@ -1,3 +1,19 @@
+window.addEventListener('popstate', function(event) {
+    signInBox = document.querySelector('#sign-in-div');
+    forgetPasswordBox = document.querySelector('#forget-pass-div');
+
+    // Update the UI based on the current URL
+    const currentUrl = document.location.pathname;
+    console.log(currentUrl)
+    if (currentUrl === '/login') {
+        signInBox.style.display = 'block';
+        forgetPasswordBox.style.display = 'none';
+    } else if (currentUrl === '/forget-password') {
+        signInBox.style.display = 'none';
+        forgetPasswordBox.style.display = 'block';
+    }
+});
+
 document.addEventListener('DOMContentLoaded', function () {
     const profileIcon = document.getElementById('profile-icon');
     const dropdownMenu = document.createElement('div');
@@ -53,5 +69,26 @@ document.addEventListener('DOMContentLoaded', function () {
             filterMenu.classList.toggle("hidden");
         })
     } catch(error) { console.log(error) }
-    
+
+
+    // Forget password logic
+    signInBox = document.querySelector('#sign-in-div');
+    signInBtn = document.querySelector('#sign-in-btn');
+    forgetPasswordBox = document.querySelector('#forget-pass-div');
+    forgetPasswordBtn = document.querySelector('#forget-password');
+
+    forgetPasswordBox.style.display = 'none';
+
+    forgetPasswordBtn.addEventListener('click', function() {
+        history.pushState({}, '', '/forget-password');
+        signInBox.style.display = 'none';
+        forgetPasswordBox.style.display = 'block';
+    })
+
+    signInBtn.addEventListener('click', function() {
+        history.pushState({}, '', '/login');
+        signInBox.style.display = 'block';
+        forgetPasswordBox.style.display = 'none';
+    })
+
 });

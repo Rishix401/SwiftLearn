@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
@@ -11,8 +12,11 @@ from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.admin.views.decorators import staff_member_required
 
+from decimal import Decimal
+import json
 import pycountry
 import stripe
+import uuid
 
 from .models import *
 
@@ -20,6 +24,13 @@ from .models import *
 # This is your test secret API key.
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
+# check if user is subscribed to email or not
+def check_email_subscribe(request):
+    try: 
+        if Email.objects.get(user=request.user): 
+            return True 
+    except: 
+        return False 
 
 # Create your views here.
 def index(request):
@@ -34,6 +45,7 @@ def index(request):
 
     return render(request, "swiftlearn/index.html", {
         'featuredCourses': courses,
+        'email_subscribed': check_email_subscribe(request),
     })
 
 
@@ -44,10 +56,8 @@ def catalog(request):
 
     selected_categories = request.GET.getlist('category')
     selected_status = request.GET.get('status')
-    selected_min_price = request.GET.get('min_price')
     selected_max_price = request.GET.get('max_price')
     selected_is_free = request.GET.get('is_free')
-    selected_is_paid = request.GET.get('is_paid')
 
     if selected_categories:
         courses = courses.filter(category__name__in=selected_categories)
@@ -58,7 +68,8 @@ def catalog(request):
 
     # filter courses based on selected price range
     if selected_max_price:
-        courses = courses.filter(price__lte=selected_max_price)
+        selected_max_price_in_cents = int(Decimal(selected_max_price) * 100)
+        courses = courses.filter(price__lte=selected_max_price_in_cents)
 
     # filter courses based on selected is_free option
     if selected_is_free:
@@ -69,9 +80,9 @@ def catalog(request):
         'courses': courses,
         'selected_categories': selected_categories,
         'selected_status': selected_status,
-        'selected_min_price': selected_min_price,
         'selected_max_price': selected_max_price,
         'selected_is_free': selected_is_free,
+        'email_subscribed': check_email_subscribe(request),
     }
     return render(request, 'swiftlearn/catalog.html', context)
 
@@ -101,6 +112,7 @@ def course(request, course_id):
         "instructors": instructors,
         "pointers": what_you_will_learn,
         "enroll": enroll,
+        'email_subscribed': check_email_subscribe(request),
         "STRIPE_PUBLIC_KEY": settings.STRIPE_PUBLIC_KEY,
     })
 
@@ -289,12 +301,66 @@ def dashboard(request):
     return render(request, "swiftlearn/dashboard.html", {
         'courses': courses,
         'recommended_courses': rec_courses,
+        'email_subscribed': check_email_subscribe(request),
     })
 
+
+@login_required
+def email(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        email = data.get('email')
+        Email.objects.create(email=email)
+        send_mail("Swiftlearn email subscribed", 
+            "you have successfully subscribed our email.", 
+            settings.EMAIL_HOST_USER, [email], 
+            fail_silently=False
+        )
+        return JsonResponse({'status': 'success'})
+    
+    return JsonResponse({'status': 'failed'})
+
+
+@staff_member_required
+def send_mail_to_all_subscribers(request):
+    if request.method == 'POST':
+        subject = request.POST.get('subject')
+        message = request.POST.get('message')
+        recipient_list = Email.objects.values_list('email', flat=True)
+    
+        # Send email to each recipient
+        for recipient in recipient_list:
+            send_mail(subject, message, settings.EMAIL_HOST_USER, [recipient], fail_silently=False)
+
+        # Return a success response
+        return HttpResponse("Email sent to all users!")
+   
+    return render(request, "swiftlearn/sendMail.html")
 
 
 @login_required
 def profile(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        old_password = data.get('old_password')
+        new_password = data.get('new_password')
+        confirm_password = data.get('confirm_password')
+        
+        # Check if the new passwords match
+        if new_password != confirm_password:
+            return JsonResponse({'success': False, 'error': "New passwords don't match!"})
+        
+        # Check if the old password is correct
+        user = authenticate(username=request.user.username, password=old_password)
+        if user is None:
+            return JsonResponse({'success': False, 'error': "Old password is incorrect!"})
+        
+        # Update the password in the database
+        user.set_password(new_password)
+        user.save()
+        
+        return JsonResponse({'success': True})
+
     country_code = request.user.country
     try: country_name = pycountry.countries.get(alpha_2=country_code).name
     except: country_name = None
@@ -303,6 +369,7 @@ def profile(request):
     return render(request, "swiftlearn/profile.html", {
         "country_name": country_name,
         'COUNTRY_CHOICES': COUNTRY_CHOICES,
+        'email_subscribed': check_email_subscribe(request),
     })
 
 
@@ -324,6 +391,84 @@ def update_profile(request):
 
         return redirect("profile")
 
+    
+def change_password(request, token):
+    context = {"token": token}
+    try:
+        profile_obj = Profile.objects.get(forget_password_token=token)
+
+        if request.method == "POST":
+            new_password = request.POST.get("new_password")
+            confirm_password = request.POST.get("confirm_password")
+            user_id = request.POST.get("user_id")
+
+            if user_id is None:
+                return redirect('/change-password/{token}')
+                
+            if new_password != confirm_password:
+                return JsonResponse({"status": "failed"})
+            
+            user_obj = User.objects.get(id=user_id)
+            user_obj.set_password(new_password)
+            user_obj.save()
+
+            profile_obj.forget_password_token = ''
+            profile_obj.save()
+
+            return JsonResponse({"status": "success"})
+
+        context = {"user_id": profile_obj.user.id, "token": token}
+        
+
+    except Exception as e:
+        print(e)
+    return render(request, "swiftlearn/changePassword.html", context)
+
+
+def send_forget_pass_mail(email, token):
+    subject = 'Swiftlearn: Forgotten Password'
+    message = '''
+    Hello
+
+    You have requested a new password for your Swiftlearn account.
+
+    Click the following link to reset your password:
+
+    http://127.0.0.1:8000/change-password/{}
+
+    Thank you,
+
+    The Swiftlearn team
+    http://127.0.0.1:8000/
+    '''.format(token)
+
+    email_from = settings.EMAIL_HOST_USER
+    recipient_list = [email]
+    send_mail(subject, message, email_from, recipient_list, fail_silently=False)
+    return True
+
+
+def forget_password(request):
+    try:
+        if request.method == 'POST':
+            username = request.POST.get('username')
+
+            if not User.objects.filter(username=username).first():
+                return JsonResponse({"message": "No user found with this username.", "status": "failed"}, status=200)
+            
+            User_obj = User.objects.get(username=username)
+            token = str(uuid.uuid4())
+            Profile_obj = Profile.objects.get(user=User_obj)
+            Profile_obj.forget_password_token = token
+            Profile_obj.save()
+            
+            send_forget_pass_mail(User_obj.email, token)
+            return JsonResponse({"message": "Change Password link sent to your email.", "status": 'success'}, status=200)
+
+    except Exception as e:
+        print(e)
+
+    return redirect('/login')
 
 
 def login_view(request):
@@ -377,6 +522,10 @@ def register(request):
             user.last_name = last_name
             user.country = country
             user.save()
+
+            profile = Profile.objects.create(user=user)
+            profile.save()
+
         except IntegrityError:
             return render(request, "swiftlearn/register.html", {
                 "u_message": "Username already taken."

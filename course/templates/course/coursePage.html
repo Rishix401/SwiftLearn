@@ -49,6 +49,9 @@
                     class="text-blue-700 hover:underline text-lg ">{{lecture.title}}</a>
             </div>
         </div>
+        {% empty %}
+        <div class="border-b-[1px] border-gray-200 mx-6 my-4 font-medium text-xl">No Lectures Yet!</div>
+        </div>
         {% endfor %}
     </div>
 </div>

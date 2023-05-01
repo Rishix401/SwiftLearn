@@ -76,8 +76,9 @@
     {% endfor %}
 </ul>
 
-{% if not enroll %}
+{% if request.user.is_authenticated %}
 
+{% if not enroll %}
 {% if course.is_free %}
 <form action="{% url 'enroll' course.id %}" method="POST">
     {% csrf_token %}
@@ -121,6 +122,13 @@
 {% else %}
 <div class="m-7">
     <a href="/course/{{ course.id }}" class="bg-[#00262b] hover:bg-[#00262bdf] font-[Merriweather Sans] px-6 py-4 font-semibold rounded-sm text-white text-xl">View Course</a>
+</div>
+{% endif %}
+
+{% else %}
+
+<div class="m-7">
+    <a href="/login" class="bg-red-700 hover:bg-red-800 font-[Merriweather Sans] px-6 py-4 m-7 font-semibold rounded-sm text-white text-xl">Sign in to Enroll</a>
 </div>
 {% endif %}
 

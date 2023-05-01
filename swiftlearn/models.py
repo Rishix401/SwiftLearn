@@ -273,6 +273,17 @@ class Category(models.Model):
         verbose_name = "Category"
         verbose_name_plural = "Categories"
 
+class Email(models.Model):
+    user = models.ForeignKey(User, models.CASCADE, related_name="users")
+    email = models.EmailField()
+
+    def __str__(self):
+        return f"{self.user} - {self.email}"
+    
+    class Meta:
+        verbose_name = "Email subscriber"
+        verbose_name_plural = "Email subscribers"
+
 
 class Instructor(models.Model):
     name = models.CharField(max_length=100)
@@ -301,7 +312,7 @@ class Course(models.Model):
 
     title = models.CharField(max_length=200)
     description = models.TextField(max_length=4000)
-    price = models.IntegerField() # cents    
+    price = models.PositiveBigIntegerField() # cents    
     is_free = models.BooleanField(default=False)
     status = models.CharField(choices=STATUS_CHOICES, max_length=20)
     start_date = models.DateField()
@@ -340,18 +351,6 @@ class Enroll(models.Model):
         verbose_name_plural = "Enrollments"
 
 
-class Cart(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    courses = models.ManyToManyField(Course)
-
-    def __str__(self):
-        return f"{self.user.username}'s cart"
-
-    class Meta:
-        verbose_name = "Cart"
-        verbose_name_plural = "Carts"
-
-
 class Coupon(models.Model):
     code = models.CharField(max_length=50, unique=True)
     percent_off = models.PositiveIntegerField()
@@ -365,3 +364,16 @@ class Coupon(models.Model):
     class Meta:
         verbose_name = "Coupon"
         verbose_name_plural = "Coupons"
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    forget_password_token = models.CharField(max_length=100, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user.username
+    
+    class Meta:
+        verbose_name = "Profile"
+        verbose_name_plural = "Profiles"

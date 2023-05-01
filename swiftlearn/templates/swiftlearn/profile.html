@@ -114,8 +114,9 @@
                 <div class="flex w-full space-y-6 md:space-y-0 md:space-x-4 flex-col md:flex-row">
                     <div class="relative w-full">
                         <div class="flex justify-between">
+                            {% csrf_token %}
                             <label class="text-lg text-[#454545]" for="password">Password</label>
-                            <a class="text-blue-700 cursor-pointer underline" href="#">Change Password</a>
+                            <a class="text-blue-700 cursor-pointer underline" href="#" id="change-password">Change Password</a>
                         </div>
                         <input class="mt-2 w-full p-2 text-[1em] border-2 border-[#707070] rounded-sm outline-none focus:border-black font-[Poppins] font-semibold tracking-wider" type="password" id="password" value="password" disabled>
                     </div>
@@ -140,8 +141,9 @@
         </div>
     </div>
 
-<div class="">
-    <div class="left bg-[url('https://profile.edx.org/ddb7d64d44c751595981eb1d70715eb5.png')] bg-repeat-x h-48 bg-[#00262b] w-full" style="background-size: auto 85%;">
+<div>
+    <div class="left bg-[url('https://profile.edx.org/ddb7d64d44c751595981eb1d70715eb5.png')] bg-repeat-x h-48 bg-[#00262b] w-full" 
+    style="background-size: auto 85%;">
     </div>
     <svg class="absolute text-[#707070] bg-[#e1dddb] rounded-[50%] top-16 h-48 float-left mt-16 ml-8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="text-muted" role="img" aria-hidden="true" focusable="false"><path d="M4.103 18.135c.614-2.077 3.916-3.663 7.897-3.663 3.981 0 7.283 1.586 7.897 3.663A9.957 9.957 0 0 0 22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 2.312.785 4.441 2.103 6.135ZM12 24C5.373 24 0 18.627 0 12S5.373 0 12 0s12 5.373 12 12-5.373 12-12 12Zm0-11a4 4 0 1 1 0-8 4 4 0 0 1 0 8Z" fill="currentColor" fill-rule="evenodd"></path></svg>
 
@@ -190,6 +192,44 @@
         modal.style.display = "none";
     }
     }
+
+    // Change Password
+    document.querySelector('#change-password').addEventListener('click', function() {
+        const oldPassword = prompt('Enter old password: ');
+        const newPassword = prompt('Enter new password: ');
+        const confirmPassword = prompt('Retype new password: ');
+
+        const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+        if (newPassword != confirmPassword) {
+            alert("New password don't match!")
+        } else {
+            fetch('/profile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: JSON.stringify({
+                    old_password: oldPassword,
+                    new_password: newPassword,
+                    confirm_password: confirmPassword,
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Password changed successfully!');
+                    window.location.href = '/login'
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    })
 </script>
 
 {% endblock %}

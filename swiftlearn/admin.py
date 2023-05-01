@@ -49,6 +49,15 @@ class CommentAdmin(admin.ModelAdmin):
     list_display = ('user', 'lecture', 'comment', 'rating',)
     search_fields = ('user__username', 'lecture__title',)
 
+class EmailAdmin(admin.ModelAdmin):
+    list_display = ('user', 'email')
+    search_fields = ('user__username', 'email')
+
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'forget_password_token', 'created_at')
+    list_filter = ('created_at',)
+    search_fields = ('user__username', 'user__email')
+    date_hierarchy = 'created_at'
 
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(Instructor, InstructorAdmin)
@@ -56,4 +65,5 @@ admin.site.register(Course, CourseAdmin)
 admin.site.register(Enroll, EnrollAdmin)
 admin.site.register(Coupon, CouponAdmin)
 admin.site.register(Category, CategoryAdmin)
-admin.site.register(Cart)
+admin.site.register(Email, EmailAdmin)
+admin.site.register(Profile, ProfileAdmin)
