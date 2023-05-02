@@ -86,7 +86,7 @@
 
 <div
     class="mb-4 bg-[url('https://psl.eu/sites/default/files/2017-10/actu_harvard-gates-fall-cc-Tim-Sackton-Flickr-Creative-commons.jpg')] bg-center bg-cover">
-    <div class="bg-black bg-opacity-50 md:pb-10">
+    <div class="bg-black bg-opacity-50 md:pb-10 pt-8">
         <h1
             class="text-3xl md:text-6xl lg:text-8xl font-[Merriweather] text-white text-center pt-10 md:pt-14 lg:pt-16 font-thin">
             Professional and
@@ -110,7 +110,8 @@
     </div>
 </div>
 
-<form class=" border-2 border-black rounded-lg px-6 py-3 m-4 bg-gray-100" action="#">
+<form class=" border-2 border-black rounded-lg px-6 py-3 m-4 bg-gray-100" id="counseling-form" action="#" method="post">
+    {% csrf_token %}
     <h2 class="text-xl text-center mb-4 font-semibold font-[Merriweather Sans] md:text-4xl md:mb-2">Book a Counseling
         Session</h2>
     <p class="hidden md:block text-xl text-center mb-2">Learn from World's Finest Academic Ecosystem</p>
@@ -128,7 +129,7 @@
         <input class="w-[100%] px-3 py-1 md:py-1.5 mb-2 border-2 rounded-md" type="email" name="email" id="email">
     </div>
     <div>
-        <label for="text">Your Location *</label> <br>
+        <label for="address">Your Location *</label> <br>
         <input class="w-[100%] px-3 py-1 md:py-1.5 mb-2 border-2 rounded-md" type="text" name="address" id="address">
     </div>
     <div class="flex justify-center">

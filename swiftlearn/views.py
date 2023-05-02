@@ -282,7 +282,12 @@ def enroll(request, course_id):
         return redirect(f'/catalog/{course_id}')
     
 
-
+def counseling(request):
+    if request.method == "POST":
+        full_name = request.POST.get("name")
+        mobile_number = request.POST.get("phone")
+        email = request.POST.get("email")
+        address = request.POST.get("address")
 
 
 @login_required

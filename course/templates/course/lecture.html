@@ -202,6 +202,7 @@
             </div>
         </div>
 
+        {% if comments %}
         <div class="mx-1 my-3 p-4 border-[1px] border-[#cad8dd] rounded-sm" id="other-comments">
           {% for comment in comments %}
           <div class="comments mb-5">
@@ -224,6 +225,7 @@
           {% endfor %}
         </div>
       </div>
+      {% endif %}
       
 
 </div>
