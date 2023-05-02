@@ -254,10 +254,11 @@ def stripe_webhook(request):
         Enroll.objects.create(course=course, user=user) # Enroll the user in course
 
         send_mail(
-            subject=f"Congrats! You're enrolled in {course.title}",
-            message=f"Thanks for your purchase! Start Learning: http://127.0.0.1:8000/course/{course_id}",
-            recipient_list=[customer_email],
-            from_email="bot@swift.com",
+            f"Congrats! You're enrolled in {course.title}",
+            f"Thanks for your purchase! Start Learning: http://127.0.0.1:8000/course/{course_id}",
+            settings.EMAIL_HOST_USER,
+            [customer_email],
+            fail_silently=False
         )
 
     return HttpResponse(status=200)
@@ -269,7 +270,18 @@ def enroll(request, course_id):
 
     if course.is_free:
         Enroll.objects.create(course=course, user=request.user)
+        
+        send_mail(
+            f"Congrats! You're enrolled in {course.title}",
+            f"Thanks for your enrollment! Start Learning: http://127.0.0.1:8000/course/{course_id}",
+            settings.EMAIL_HOST_USER,
+            [request.user.email],
+            fail_silently=False
+        )
+        
         return redirect(f'/catalog/{course_id}')
+    
+
 
 
 
@@ -530,7 +542,16 @@ def register(request):
             return render(request, "swiftlearn/register.html", {
                 "u_message": "Username already taken."
             })
+        
         login(request, user)
+        send_mail(
+            "Swiftlearn: New Account Created",
+            "Congrats! you have successfully created a swiftlearn account. Start Learning: http://127.0.0.1:8000",
+            settings.EMAIL_HOST_USER,
+            [user.email],
+            fail_silently=False
+        )
+
         return HttpResponseRedirect(reverse("index"))
     else:
         COUNTRY_CHOICES = User.COUNTRY_CHOICES
