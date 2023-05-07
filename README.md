@@ -3,7 +3,7 @@
 Swiftlearn is an e-learning platform designed to help students learn online in a convenient and interactive way. This platform has been created using Django, JavaScript and Tailwind CSS to provide a responsive and user-friendly experience.
 
 ## **Distinctiveness and Complexity:**
-Swiftlearn is distinct from other e-learning platforms because of the complexity of the features that it offers. Some of the features that set it apart include:
+Swiftlearn is distinct from previous projects because of the complexity of the features that it offers. Some of the features that set it apart include:
 
 - Users can view featured courses or subscribe to the email list from the home page.
 - The dashboard section allows users to track their course progress and access lectures they have enrolled in. Additionally, it provides recommendations for courses based on the categories of courses the user has purchased.

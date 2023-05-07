@@ -24,14 +24,14 @@ class InstructorAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('title', 'category', 'status', 'start_date', 'end_date',)
+    list_display = ('title', 'category', 'status', 'start_date', 'end_date', 'is_free')
     list_filter = ('status', 'category',)
     search_fields = ('title', 'category__name',)
     filter_horizontal = ('instructor',)
 
 class EnrollAdmin(admin.ModelAdmin):
-    list_display = ('course', 'user', 'enrollment_date', 'certificate',)
-    list_filter = ('certificate',)
+    list_display = ('course', 'user', 'enrollment_date',)
+    list_filter = ('course', 'user',)
     search_fields = ('course__title', 'user__username',)
 
 class CouponAdmin(admin.ModelAdmin):

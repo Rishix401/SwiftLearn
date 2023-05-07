@@ -72,23 +72,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     // Forget password logic
-    signInBox = document.querySelector('#sign-in-div');
-    signInBtn = document.querySelector('#sign-in-btn');
-    forgetPasswordBox = document.querySelector('#forget-pass-div');
-    forgetPasswordBtn = document.querySelector('#forget-password');
-
-    forgetPasswordBox.style.display = 'none';
-
-    forgetPasswordBtn.addEventListener('click', function() {
-        history.pushState({}, '', '/forget-password');
-        signInBox.style.display = 'none';
-        forgetPasswordBox.style.display = 'block';
-    })
-
-    signInBtn.addEventListener('click', function() {
-        history.pushState({}, '', '/login');
-        signInBox.style.display = 'block';
+    try {
+        signInBox = document.querySelector('#sign-in-div');
+        signInBtn = document.querySelector('#sign-in-btn');
+        forgetPasswordBox = document.querySelector('#forget-pass-div');
+        forgetPasswordBtn = document.querySelector('#forget-password');
+    
         forgetPasswordBox.style.display = 'none';
-    })
+    
+        forgetPasswordBtn.addEventListener('click', function() {
+            history.pushState({}, '', '/forget-password');
+            signInBox.style.display = 'none';
+            forgetPasswordBox.style.display = 'block';
+        })
+    
+        signInBtn.addEventListener('click', function() {
+            history.pushState({}, '', '/login');
+            signInBox.style.display = 'block';
+            forgetPasswordBox.style.display = 'none';
+        })
+    } catch(error) { console.log(error) }
 
 });

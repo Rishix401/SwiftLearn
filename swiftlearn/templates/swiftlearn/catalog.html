@@ -1,6 +1,7 @@
 {% extends 'swiftlearn/layout.html' %}
 
 {% block style %}
+<!-- card styling -->
 <style>
     .card-container {
         display: flex;
@@ -83,6 +84,7 @@
 {% endblock %}
 
 {% block body %}
+<!-- filter code starts here for large devices -->
 <form method="get" class="hidden lg:block space-y-4 float-left px-4 py-2">
     <div class="filter-group">
         <label for="status" class="block font-medium mb-0">Subject Areas</label>
@@ -146,6 +148,7 @@
     </div>
 </form>
 
+<!-- filter code starts here for medium and small devices -->
 <div class="lg:hidden m-2 sticky">
     <button type="button" class="flex justify-center items-center w-full px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" id="sm-filter-btn">Filter</button>
 
@@ -214,6 +217,7 @@
     </div>
 </div>
 
+<!-- displaying cards -->
 <div class="card-container my-2">
     {% for course in courses %}
     <div class="card">
@@ -222,7 +226,7 @@
         {% endif %}
         <div class="card-content">
             <h2 class="card-category">{{ course.category }}</h2>
-            <a href="catalog/{{ course.id }}" class="card-title">{{ course.title }}</a>
+            <a href="{% url 'catalog' %}/{{ course.id }}" class="card-title">{{ course.title }}</a>
             {% if course.description|length > 100 %}
                 <p class="card-description">{{ course.description|slice:100 }}...</p>
             {% else %}

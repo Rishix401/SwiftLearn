@@ -1,6 +1,8 @@
 {% extends 'swiftlearn/layout.html' %}
+{% load static %}
 
 {% block style %}
+<!-- card styling -->
 <style>
     .card-container {
         display: flex;
@@ -79,11 +81,13 @@
         margin: 5px 0;
         text-transform: uppercase;
     }
+    
 </style>
 {% endblock %}
 
 {% block body %}
 
+<!-- display harvard gate image and all, free and paid courses button -->
 <div
     class="mb-4 bg-[url('https://psl.eu/sites/default/files/2017-10/actu_harvard-gates-fall-cc-Tim-Sackton-Flickr-Creative-commons.jpg')] bg-center bg-cover">
     <div class="bg-black bg-opacity-50 md:pb-10 pt-8">
@@ -110,6 +114,7 @@
     </div>
 </div>
 
+<!-- display counseling form -->
 <form class=" border-2 border-black rounded-lg px-6 py-3 m-4 bg-gray-100" id="counseling-form" action="#" method="post">
     {% csrf_token %}
     <h2 class="text-xl text-center mb-4 font-semibold font-[Merriweather Sans] md:text-4xl md:mb-2">Book a Counseling
@@ -139,6 +144,8 @@
     </div>
 </form>
 
+<!-- display featured courses -->
+{% if featuredCourses %}
 <h2 class="font-[Merriweather] text-xl md:text-4xl mx-4 my-2">Featured Courses</h2>
 
 <div class="card-container my-2">
@@ -173,49 +180,90 @@
     {% endfor %}
     </div>
 <br>
+{% endif %}
 
+<!-- about platform -->
 <div>
-    <h1 class="text-center text-3xl md:text-4xl text-[Merriweather Sans] font-semibold m-2">World's Largest Super Carrer
-        Platform
-    </h1>
-    <div
-        class="box flex flex-col md:flex-row space-y-5 md:space-y-0 justify-around items-center text-center font-[Merriweather Sans] text-lg md:text-xl font-semibold m-4 p-2 md:p-6 bg-[rgba(38,104,179,.1)] bg-opacity-40 text-black rounded-sm">
-        <div>
-            <h1>6,000,000 +</h1>
-            <p>Learners</p>
-        </div>
-        <div>
-            <h1>1000</h1>
-            <p>Courses</p>
-        </div>
-        <div>
-            <h1>180</h1>
-            <p>Countries</p>
-        </div>
+    <h1 class="text-center text-3xl md:text-4xl text-[Merriweather Sans] font-semibold m-2">World's Largest Super Career Platform</h1>
+    <div class="box flex flex-col md:flex-row space-y-5 md:space-y-0 justify-around items-center text-center font-[Merriweather Sans] text-lg md:text-xl font-semibold m-4 p-2 md:p-6 bg-[rgba(38,104,179,.1)] bg-opacity-40 text-black rounded-sm">
+      <div>
+        <h1 class="counter" data-value="60000">60,000</h1>
+        <p>Learners</p>
+      </div>
+      <div>
+        <h1 class="counter" data-value="150">150</h1>
+        <p>Courses</p>
+      </div>
+      <div>
+        <h1 class="counter" data-value="12">12</h1>
+        <p>Countries</p>
+      </div>
     </div>
+</div>
 
-    <div
-        class="flex flex-col md:flex-row space-y-5 md:space-y-0 justify-around items-center font-[Merriweather Sans] m-4">
-        <div class="text-center">
-            <img class="w-1/6 mx-auto" src="https://cdn.toprankers.net.in/svg/Better%20Teacher.svg" alt="">
-            <h2 class="text-2xl font-medium mb-2">Better Teachers</h2>
-            <p class="text-lg">Experienced and Empathetic Teachers mentoring & teaching via LIVE & Interactive Classes
-                with an average review of 4.7+ ensures Quality Content Delivery in each and every class.</p>
-        </div>
-        <div class="text-center">
-            <img class="w-1/6 mx-auto" src="https://cdn.toprankers.net.in/svg/Better-Learning.svg" alt="">
-            <h2 class="text-2xl font-medium mb-2">Better Learning</h2>
-            <p class="text-lg">The 360° Prep Engine working in a Controlled Learning Environment, ensures that a
-                Student's Performance is evidently better via Regular Classes, Frequent Testing, Personalized Feedback
-                and Mentoring Sessions.</p>
-        </div>
-        <div class="text-center">
-            <img class="w-1/6 mx-auto" src="https://cdn.toprankers.net.in/svg/Better%20Result.svg" alt="">
-            <h2 class="text-2xl font-medium mb-2">Better Results</h2>
-            <p class="text-lg">Better Learning ensures Better Results. With the highest Student Success Ratios in the
-                country, we are not just proud of our Quality of Results but also the Quality of Final Admission Offers
-                to our Students.</p>
-        </div>
+<!-- logic to animate numbers -->
+<!-- code by chatGPT -->
+<script>
+    const counters = document.querySelectorAll('.counter');
+    const duration = 6000; // total animation duration in milliseconds for all counters
+    const step = 1; // increment per frame
+
+    const options = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.5 // trigger animation when element is 50% visible
+    };
+
+    const observer = new IntersectionObserver(function(entries, observer) {
+    entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+        const counter = entry.target;
+        const end = parseInt(counter.getAttribute('data-value'));
+        let currentValue = 0;
+        const startTime = performance.now();
+        const animate = function(now) {
+            const elapsedTime = now - startTime;
+            if (elapsedTime < duration) {
+            currentValue = Math.min(end, Math.floor(elapsedTime / duration * end));
+            counter.textContent = currentValue.toLocaleString(); // format with commas
+            requestAnimationFrame(animate);
+            } else {
+            counter.textContent = end.toLocaleString(); // format with commas
+            observer.unobserve(counter); // stop observing this element
+            }
+        }
+        requestAnimationFrame(animate);
+        }
+    });
+    }, options);
+
+    counters.forEach(function(counter) {
+    observer.observe(counter); // start observing each counter
+    });
+</script>
+    
+<!-- -->
+<div
+    class="flex flex-col md:flex-row space-y-5 md:space-y-0 justify-around items-center font-[Merriweather Sans] m-4">
+    <div class="text-center">
+        <img class="w-1/6 mx-auto" src="{% static 'swiftlearn/Better-Teacher.svg' %}" alt="">
+        <h2 class="text-2xl font-medium mb-2">Better Teachers</h2>
+        <p class="text-lg">Experienced and Empathetic Teachers mentoring & teaching via LIVE & Interactive Classes
+            with an average review of 4.7+ ensures Quality Content Delivery in each and every class.</p>
+    </div>
+    <div class="text-center">
+        <img class="w-1/6 mx-auto" src="{% static 'swiftlearn/Better-Learning.svg' %}" alt="">
+        <h2 class="text-2xl font-medium mb-2">Better Learning</h2>
+        <p class="text-lg">The 360° Prep Engine working in a Controlled Learning Environment, ensures that a
+            Student's Performance is evidently better via Regular Classes, Frequent Testing, Personalized Feedback
+            and Mentoring Sessions.</p>
+    </div>
+    <div class="text-center">
+        <img class="w-1/6 mx-auto" src="{% static 'swiftlearn/Better-Result.svg' %}" alt="">
+        <h2 class="text-2xl font-medium mb-2">Better Results</h2>
+        <p class="text-lg">Better Learning ensures Better Results. With the highest Student Success Ratios in the
+            country, we are not just proud of our Quality of Results but also the Quality of Final Admission Offers
+            to our Students.</p>
     </div>
 </div>
 
