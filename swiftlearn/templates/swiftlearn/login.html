@@ -1,9 +1,12 @@
 {% extends 'course/layout.html' %}
 
+{% load static %}
+
 {% block body %}
 <div class="flex">
-    <img class="hidden lg:block w-2/3" src="https://cdn.toprankers.net.in/svg/Group.svg" alt="image">
+    <img class="hidden lg:block w-2/3" src="{% static 'swiftlearn/Group.svg' %}" alt="image">
 
+    <!-- login code starts here -->
     <div id="sign-in-div" class="w-full mx-0 md:mx-24">
         <form action="{% url 'login' %}"
             class="flex justify-center items-start min-h-[10vh] flex-col gap-6 px-5 py-10 w-[100%]" method="post">
@@ -35,7 +38,7 @@
         </form>
     </div>
 
-
+    <!-- forgot password code starts here -->
     <div id="forget-pass-div" class="mx-12 md:mx-24 lg:mx-48 my-12">
 
         <div class="flex mx-5 border-b-[1px] border-[#eaeaea] mb-4">
@@ -69,6 +72,7 @@
 
 </div>
 
+<!-- forgot password logic -->
 <script>
     const form = document.getElementById('forget-password-form');
 

@@ -341,7 +341,6 @@ class Enroll(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     enrollment_date = models.DateTimeField(default=timezone.now)
-    certificate = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.user.username} enrolled in {self.course.title}"
@@ -349,6 +348,7 @@ class Enroll(models.Model):
     class Meta:
         verbose_name = "Enrollment"
         verbose_name_plural = "Enrollments"
+        unique_together = ('course', 'user')
 
 
 class Coupon(models.Model):

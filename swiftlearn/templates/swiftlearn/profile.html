@@ -1,6 +1,7 @@
 {% extends 'swiftlearn/layout.html' %}
 
 {% block style %}
+<!-- modal styling -->
 <style>
     .modal {
     display: none;
@@ -79,6 +80,7 @@
 
 <script>document.addEventListener('DOMContentLoaded', function () { document.querySelector("#country").value = document.querySelector("#country").getAttribute("data-country") })</script>
 
+<!-- modal code starts here -->
 <div class="modal" id="profile-modal" tabindex="-1">
     <div class="modal-background"></div>
     <div class="modal-container">
@@ -138,9 +140,10 @@
                 </div>
             </form>
         </div>
-        </div>
     </div>
+</div>
 
+<!-- profile page code starts here -->
 <div>
     <div class="left bg-[url('https://profile.edx.org/ddb7d64d44c751595981eb1d70715eb5.png')] bg-repeat-x h-48 bg-[#00262b] w-full" 
     style="background-size: auto 85%;">

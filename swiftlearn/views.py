@@ -327,7 +327,7 @@ def email(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         email = data.get('email')
-        Email.objects.create(email=email)
+        Email.objects.create(user=request.user, email=email)
         send_mail("Swiftlearn email subscribed", 
             "you have successfully subscribed our email.", 
             settings.EMAIL_HOST_USER, [email], 

@@ -1,11 +1,13 @@
 {% extends 'course/layout.html' %}
 
+{% load static %}
+
 {% block body %}
 <script language="JavaScript" src="http://www.geoplugin.net/javascript.gp" type="text/javascript"></script>
 <script>document.addEventListener('DOMContentLoaded', function () { document.querySelector("#country").value = geoplugin_countryCode() })</script>
 
 <div class="flex">
-    <img class="hidden lg:block" src="https://cdn.toprankers.net.in/svg/Group.svg" alt="image">
+    <img class="hidden lg:block" src="{% static 'swiftlearn/Group.svg' %}" alt="image">
 
     <form action="{% url 'register' %}" class="flex justify-center items-center min-h-[10vh] flex-col gap-6 px-5 py-10"
         method="post">

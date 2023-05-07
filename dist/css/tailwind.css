@@ -550,6 +550,10 @@ video {
   }
 }
 
+.visible {
+  visibility: visible;
+}
+
 .static {
   position: static;
 }
@@ -1394,6 +1398,10 @@ video {
   background-image: url('https://psl.eu/sites/default/files/2017-10/actu_harvard-gates-fall-cc-Tim-Sackton-Flickr-Creative-commons.jpg');
 }
 
+.bg-\[url\(\{\'https\:\/\/psl\.eu\/sites\/default\/files\/2017-10\/actu_harvard-gates-fall-cc-Tim-Sackton-Flickr-Creative-commons\.jpg\'\}\)\] {
+  background-image: url({'https://psl.eu/sites/default/files/2017-10/actu_harvard-gates-fall-cc-Tim-Sackton-Flickr-Creative-commons.jpg'});
+}
+
 .bg-cover {
   background-size: cover;
 }
@@ -1767,6 +1775,10 @@ video {
 
 .invert-\[68\%\] {
   --tw-invert: invert(68%);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
+.filter {
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 
