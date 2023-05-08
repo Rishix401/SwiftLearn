@@ -19,7 +19,7 @@ Swiftlearn is distinct from previous projects because of the complexity of the f
 Clone the repository to your local machine:
 
 ``` 
-git clone https://github.com/<your-github-username>/Swiftlearn.git 
+git clone https://github.com/Rishix401/Swiftlearn.git 
 ```
 
 Create a virtual environment:
